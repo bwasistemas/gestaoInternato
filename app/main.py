@@ -14,11 +14,17 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
 import io
 
-app = FastAPI(title="Internato Manager", version="2.0")
+# Configurar root_path apenas se BASE_PATH estiver definido
+root_path = BASE_PATH if BASE_PATH else ""
+app = FastAPI(title="Internato Manager", version="2.0", root_path=root_path)
 
 # Configuração de templates e arquivos estáticos
 templates = Jinja2Templates(directory="app/templates")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+# Configuração para subdiretório
+import os
+BASE_PATH = os.getenv("BASE_PATH", "")
 
 # Configuração para HTTPS
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
@@ -32,6 +38,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Função para gerar URLs com prefixo
+def get_url_with_prefix(path: str) -> str:
+    """Gera URL com prefixo do subdiretório"""
+    if not BASE_PATH:
+        return path
+    if path.startswith("/"):
+        return f"{BASE_PATH}{path}"
+    return f"{BASE_PATH}/{path}"
 
 # Middleware para detectar HTTPS
 @app.middleware("http")
@@ -66,9 +81,9 @@ async def read_root(request: Request):
     user = get_current_user(request)
     if user:
         if user.get("tipo") == "aluno":
-            return RedirectResponse(url="/aluno-dashboard", status_code=302)
+            return RedirectResponse(url=get_url_with_prefix("/aluno-dashboard"), status_code=302)
         else:
-            return RedirectResponse(url="/dashboard", status_code=302)
+            return RedirectResponse(url=get_url_with_prefix("/dashboard"), status_code=302)
     return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/login")
@@ -79,11 +94,11 @@ async def login(request: Request, email: str = Form(...), data_nascimento: str =
         session_id = secrets.token_urlsafe(32)
         sessions[session_id] = user
 
-        # Usar URLs relativas para evitar problemas com HTTPS
+        # Usar URLs com prefixo para subdiretório
         if user.get("tipo") == "aluno":
-            response = RedirectResponse(url="/aluno-dashboard", status_code=302)
+            response = RedirectResponse(url=get_url_with_prefix("/aluno-dashboard"), status_code=302)
         else:
-            response = RedirectResponse(url="/dashboard", status_code=302)
+            response = RedirectResponse(url=get_url_with_prefix("/dashboard"), status_code=302)
 
         response.set_cookie(key="session_id", value=session_id, httponly=True, secure=False, samesite="lax")
         return response
@@ -95,7 +110,7 @@ async def login(request: Request, email: str = Form(...), data_nascimento: str =
 
 @app.get("/logout")
 async def logout():
-    response = RedirectResponse(url="/", status_code=302)
+    response = RedirectResponse(url=get_url_with_prefix("/"), status_code=302)
     response.delete_cookie(key="session_id", secure=False, samesite="lax")
     return response
 
@@ -103,7 +118,7 @@ async def logout():
 async def dashboard(request: Request):
     user = require_auth(request)
     if user.get("tipo") == "aluno":
-        return RedirectResponse(url="/aluno-dashboard", status_code=302)
+        return RedirectResponse(url=get_url_with_prefix("/aluno-dashboard"), status_code=302)
 
     dashboard_data = services.get_dashboard_data()
     return templates.TemplateResponse("dashboard.html", {
@@ -116,7 +131,7 @@ async def dashboard(request: Request):
 async def aluno_dashboard(request: Request):
     user = require_auth(request)
     if user.get("tipo") != "aluno":
-        return RedirectResponse(url="/dashboard", status_code=302)
+        return RedirectResponse(url=get_url_with_prefix("/dashboard"), status_code=302)
 
     dashboard_data = services.get_aluno_dashboard_data(user["id"])
     if not dashboard_data:

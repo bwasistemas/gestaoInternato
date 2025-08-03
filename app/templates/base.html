@@ -198,53 +198,53 @@
             <nav class="nav flex-column">
                 {% if user and user.tipo == "aluno" %}
                     <!-- Menu para Alunos -->
-                    <a class="nav-link" href="/aluno-dashboard">
+                    <a class="nav-link" href="{{ url_for('aluno_dashboard') }}">
                         <i class="fas fa-tachometer-alt me-2"></i>Meu Dashboard
                     </a>
-                    <a class="nav-link" href="/minhas-agendas">
+                    <a class="nav-link" href="{{ url_for('minhas_agendas') }}">
                         <i class="fas fa-calendar me-2"></i>Minhas Agendas
                     </a>
-                    <a class="nav-link" href="/perfil">
+                    <a class="nav-link" href="{{ url_for('perfil_page') }}">
                         <i class="fas fa-user me-2"></i>Meu Perfil
                     </a>
                     <hr class="text-white-50">
-                    <a class="nav-link" href="/logout">
+                    <a class="nav-link" href="{{ url_for('logout') }}">
                         <i class="fas fa-sign-out-alt me-2"></i>Sair
                     </a>
                 {% else %}
                     <!-- Menu para Usuários do Sistema -->
-                    <a class="nav-link" href="/dashboard">
+                    <a class="nav-link" href="{{ url_for('dashboard') }}">
                         <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                     </a>
-                    <a class="nav-link" href="/alunos">
+                    <a class="nav-link" href="{{ url_for('alunos_page') }}">
                         <i class="fas fa-users me-2"></i>Alunos
                     </a>
-                    <a class="nav-link" href="/especialidades">
+                    <a class="nav-link" href="{{ url_for('especialidades_page') }}">
                         <i class="fas fa-stethoscope me-2"></i>Especialidades
                     </a>
-                                                <a class="nav-link" href="/locais">
+                                                <a class="nav-link" href="{{ url_for('locais_page') }}">
                                 <i class="fas fa-hospital me-2"></i>Locais
                             </a>
-                            <a class="nav-link" href="/locais-estudo">
+                            <a class="nav-link" href="{{ url_for('locais_estudo_page') }}">
                                 <i class="fas fa-graduation-cap me-2"></i>Locais de Estudo
                             </a>
-                                                <a class="nav-link" href="/agendas">
+                                                <a class="nav-link" href="{{ url_for('agendas_page') }}">
                                 <i class="fas fa-calendar me-2"></i>Agendas
                             </a>
-                            <a class="nav-link" href="/distribuicao-carga">
+                            <a class="nav-link" href="{{ url_for('distribuicao_carga_page') }}">
                                 <i class="fas fa-chart-pie me-2"></i>Distribuição
                             </a>
-                            <a class="nav-link" href="/agenda-semanal">
+                            <a class="nav-link" href="{{ url_for('agenda_semanal_page') }}">
                                 <i class="fas fa-calendar-week me-2"></i>Agenda Semanal
                             </a>
-                    <a class="nav-link" href="/presenca">
+                    <a class="nav-link" href="{{ url_for('presenca_page') }}">
                         <i class="fas fa-check-circle me-2"></i>Presença
                     </a>
                     <hr class="text-white-50">
-                    <a class="nav-link" href="/perfil">
+                    <a class="nav-link" href="{{ url_for('perfil_page') }}">
                         <i class="fas fa-user me-2"></i>Meu Perfil
                     </a>
-                    <a class="nav-link" href="/logout">
+                    <a class="nav-link" href="{{ url_for('logout') }}">
                         <i class="fas fa-sign-out-alt me-2"></i>Sair
                     </a>
                 {% endif %}
@@ -268,9 +268,9 @@
                             <i class="fas fa-user-circle me-1"></i>{{ user.nome }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/perfil"><i class="fas fa-user me-2"></i>Perfil</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('perfil_page') }}"><i class="fas fa-user me-2"></i>Perfil</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
                         </ul>
                     </div>
                     {% endif %}
