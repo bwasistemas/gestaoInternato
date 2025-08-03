@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Perfil - Internato 2.0 - PVT Internatos{% endblock %}
+{% block page_title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-user-circle me-2"></i>Informações Pessoais
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if aluno %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Nome Completo</label>
+                        <p class="form-control-plaintext">{{ aluno.nome }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">E-mail</label>
+                        <p class="form-control-plaintext">{{ aluno.email }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Telefone</label>
+                        <p class="form-control-plaintext">{{ aluno.telefone }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Data de Nascimento</label>
+                        <p class="form-control-plaintext">{{ aluno.data_nascimento.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Especialidade Principal</label>
+                        <p class="form-control-plaintext">
+                            {% if aluno.especialidade_principal %}
+                                <span class="badge bg-primary">{{ aluno.especialidade_principal }}</span>
+                            {% else %}
+                                <span class="text-muted">Não definida</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">ID do Aluno</label>
+                        <p class="form-control-plaintext">{{ aluno.id }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-user-slash fa-3x mb-3"></i>
+                    <h5>Perfil não encontrado</h5>
+                    <p>Este usuário não possui perfil de aluno cadastrado.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">
+                    <i class="fas fa-chart-bar me-2"></i>Estatísticas
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if aluno %}
+                <div class="stats-card mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white mb-1">Total de Agendas</h6>
+                            <h3 class="text-white mb-0">{{ aluno.agendas_count|default(0) }}</h3>
+                        </div>
+                        <div class="icon text-white">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-card mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-white mb-1">Carimbos (Semana)</h6>
+                            <h3 class="text-white mb-0">{{ aluno.carimbos_semana|default(0) }}/6</h3>
+                        </div>
+                        <div class="icon text-white">
+                            <i class="fas fa-stamp"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle me-2"></i>Status</h6>
+                    {% if aluno.carimbos_semana|default(0) >= 6 %}
+                        <span class="badge bg-success">Meta atingida!</span>
+                    {% elif aluno.carimbos_semana|default(0) >= 4 %}
+                        <span class="badge bg-warning">Quase lá!</span>
+                    {% else %}
+                        <span class="badge bg-danger">Precisa de mais carimbos</span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-3">
+                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                    <p>Nenhuma estatística disponível</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if aluno %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-calendar-alt me-2"></i>Minhas Agendas Recentes
+                </h6>
+            </div>
+            <div class="card-body">
+                <div id="minhasAgendas">
+                    <!-- Carregado via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Modal Editar Perfil -->
+<div class="modal fade" id="editarPerfilModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>Editar Perfil
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editarPerfilForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editNome" class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="editNome" name="nome" value="{{ aluno.nome if aluno else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTelefone" class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" id="editTelefone" name="telefone" value="{{ aluno.telefone if aluno else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEspecialidade" class="form-label">Especialidade Principal</label>
+                        <select class="form-select" id="editEspecialidade" name="especialidade_principal">
+                            <option value="">Selecione...</option>
+                            {% for especialidade in especialidades %}
+                            <option value="{{ especialidade.nome }}" {% if aluno and aluno.especialidade_principal == especialidade.nome %}selected{% endif %}>
+                                {{ especialidade.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_actions %}
+{% if aluno %}
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editarPerfilModal">
+    <i class="fas fa-edit me-2"></i>Editar Perfil
+</button>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Carregar agendas do aluno
+{% if aluno %}
+fetch(`/api/agendas/{{ aluno.id }}?data_inicio=2024-01-01&data_fim=2024-12-31`)
+    .then(response => response.json())
+    .then(agendas => {
+        const container = document.getElementById('minhasAgendas');
+        
+        if (agendas.length > 0) {
+            let html = `
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Turno</th>
+                                <th>Especialidade</th>
+                                <th>Local</th>
+                                <th>Responsável</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            agendas.forEach(agenda => {
+                html += `
+                    <tr>
+                        <td>${new Date(agenda.data).toLocaleDateString('pt-BR')}</td>
+                        <td>
+                            <span class="badge ${agenda.turno === 'Manhã' ? 'bg-info' : 'bg-warning'}">
+                                ${agenda.turno}
+                            </span>
+                        </td>
+                        <td>${agenda.especialidade}</td>
+                        <td>${agenda.local}</td>
+                        <td>${agenda.responsavel}</td>
+                        <td>
+                            ${agenda.presenca ? 
+                                '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Presente</span>' : 
+                                '<span class="badge bg-secondary"><i class="fas fa-times me-1"></i>Ausente</span>'
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p class="text-muted text-center py-3">Nenhuma agenda encontrada.</p>';
+        }
+    })
+    .catch(error => {
+        document.getElementById('minhasAgendas').innerHTML = '<p class="text-danger text-center py-3">Erro ao carregar agendas.</p>';
+    });
+{% endif %}
+
+// Configurar formulário de edição
+document.getElementById('editarPerfilForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        nome: formData.get('nome'),
+        telefone: formData.get('telefone'),
+        especialidade_principal: formData.get('especialidade_principal')
+    };
+    
+    // Aqui você implementaria a atualização do perfil
+    alert('Funcionalidade de edição será implementada em breve!');
+});
+</script>
+{% endblock %} 

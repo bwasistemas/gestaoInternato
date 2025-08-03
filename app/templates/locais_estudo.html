@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}Locais de Estudo - Internato 2.0 - PVT Internatos{% endblock %}
+{% block page_title %}Locais de Estudo{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-hospital me-2"></i>Locais de Estudo
+                </h6>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="abrirModalAdicionar()">
+                        <i class="fas fa-plus me-2"></i>Adicionar Local
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="filtroEspecialidade" class="form-label">Filtrar por Especialidade:</label>
+                        <select class="form-select" id="filtroEspecialidade" onchange="filtrarLocais()">
+                            <option value="">Todas as Especialidades</option>
+                            {% for especialidade in especialidades %}
+                            <option value="{{ especialidade.especialidade_id }}">{{ especialidade.nome_especialidade }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="filtroTipo" class="form-label">Filtrar por Tipo:</label>
+                        <select class="form-select" id="filtroTipo" onchange="filtrarLocais()">
+                            <option value="">Todos os Tipos</option>
+                            <option value="Bloco_Cirurgico">Bloco Cirúrgico</option>
+                            <option value="Ambulatorio">Ambulatório</option>
+                            <option value="Bloco_Especializado">Bloco Especializado</option>
+                            <option value="Avaliacao_Risco">Avaliação de Risco</option>
+                            <option value="Enfermaria">Enfermaria</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="buscaLocal" class="form-label">Buscar Local:</label>
+                        <input type="text" class="form-control" id="buscaLocal" placeholder="Nome do local..." onkeyup="filtrarLocais()">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="locaisTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Especialidade</th>
+                                <th>Local</th>
+                                <th>Tipo</th>
+                                <th>Responsável</th>
+                                <th>Capacidade</th>
+                                <th>Restrições</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for especialidade in especialidades %}
+                                {% for local in especialidade.locais %}
+                                <tr class="local-row" 
+                                    data-especialidade="{{ especialidade.especialidade_id }}"
+                                    data-tipo="{{ local.tipo_local }}"
+                                    data-nome="{{ local.nome_local.lower() }}">
+                                    <td>
+                                        <span class="badge" style="background-color: {{ especialidade.cor_interface }};">
+                                            {{ especialidade.nome_especialidade }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <strong>{{ local.nome_local }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ local.endereco }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ local.tipo_local }}</span>
+                                    </td>
+                                    <td>
+                                        <strong>{{ local.medico_responsavel.nome }}</strong>
+                                        {% if local.medico_responsavel.crm %}
+                                        <br>
+                                        <small class="text-muted">CRM: {{ local.medico_responsavel.crm }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">{{ local.capacidade_alunos }} alunos</span>
+                                    </td>
+                                    <td>
+                                        {% for restricao in local.restricoes %}
+                                        <div class="mb-1">
+                                            <small class="text-muted">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>{{ restricao }}
+                                            </small>
+                                        </div>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info" onclick="verDetalhes({{ especialidade.especialidade_id }}, {{ local.local_id }})">
+                                            <i class="fas fa-eye me-1"></i>Ver
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" onclick="editarLocal({{ especialidade.especialidade_id }}, {{ local.local_id }})">
+                                            <i class="fas fa-edit me-1"></i>Editar
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detalhes do Local -->
+<div class="modal fade" id="detalhesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-hospital me-2"></i>Detalhes do Local
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detalhesContent">
+                <!-- Conteúdo será carregado dinamicamente -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar/Editar Local -->
+<div class="modal fade" id="localModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">
+                    <i class="fas fa-plus me-2"></i>Adicionar Local de Estudo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="localForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="especialidade_id" class="form-label">Especialidade *</label>
+                                <select class="form-select" id="especialidade_id" name="especialidade_id" required>
+                                    <option value="">Selecione uma especialidade...</option>
+                                    {% for especialidade in especialidades %}
+                                    <option value="{{ especialidade.especialidade_id }}">{{ especialidade.nome_especialidade }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nome_local" class="form-label">Nome do Local *</label>
+                                <input type="text" class="form-control" id="nome_local" name="nome_local" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tipo_local" class="form-label">Tipo de Local *</label>
+                                <select class="form-select" id="tipo_local" name="tipo_local" required>
+                                    <option value="">Selecione o tipo...</option>
+                                    <option value="Bloco_Cirurgico">Bloco Cirúrgico</option>
+                                    <option value="Ambulatorio">Ambulatório</option>
+                                    <option value="Bloco_Especializado">Bloco Especializado</option>
+                                    <option value="Avaliacao_Risco">Avaliação de Risco</option>
+                                    <option value="Enfermaria">Enfermaria</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="endereco" class="form-label">Endereço</label>
+                                <input type="text" class="form-control" id="endereco" name="endereco" value="A definir">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="medico_nome" class="form-label">Nome do Médico Responsável *</label>
+                                <input type="text" class="form-control" id="medico_nome" name="medico_nome" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="medico_crm" class="form-label">CRM</label>
+                                <input type="text" class="form-control" id="medico_crm" name="medico_crm" value="A definir">
+                            </div>
+                            <div class="mb-3">
+                                <label for="medico_titulo" class="form-label">Título</label>
+                                <select class="form-select" id="medico_titulo" name="medico_titulo">
+                                    <option value="Dr.">Dr.</option>
+                                    <option value="Dra.">Dra.</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="capacidade_alunos" class="form-label">Capacidade de Alunos *</label>
+                                <input type="number" class="form-control" id="capacidade_alunos" name="capacidade_alunos" min="1" max="10" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="restricoes" class="form-label">Restrições</label>
+                                <textarea class="form-control" id="restricoes" name="restricoes" rows="3" 
+                                          placeholder="Digite as restrições, uma por linha..."></textarea>
+                                <div class="form-text">Digite uma restrição por linha</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_actions %}
+<button type="button" class="btn btn-info" onclick="exportarLocais()">
+    <i class="fas fa-download me-2"></i>Exportar
+</button>
+<button type="button" class="btn btn-success" onclick="importarLocais()">
+    <i class="fas fa-upload me-2"></i>Importar
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filtrarLocais() {
+    const especialidade = document.getElementById('filtroEspecialidade').value;
+    const tipo = document.getElementById('filtroTipo').value;
+    const busca = document.getElementById('buscaLocal').value.toLowerCase();
+    
+    const rows = document.querySelectorAll('.local-row');
+    
+    rows.forEach(row => {
+        const especialidadeRow = row.dataset.especialidade;
+        const tipoRow = row.dataset.tipo;
+        const nomeRow = row.dataset.nome;
+        
+        let mostrar = true;
+        
+        if (especialidade && especialidadeRow !== especialidade) {
+            mostrar = false;
+        }
+        
+        if (tipo && tipoRow !== tipo) {
+            mostrar = false;
+        }
+        
+        if (busca && !nomeRow.includes(busca)) {
+            mostrar = false;
+        }
+        
+        row.style.display = mostrar ? '' : 'none';
+    });
+}
+
+function verDetalhes(especialidadeId, localId) {
+    // Buscar dados do local
+    fetch(`/api/especialidades-completas`)
+        .then(response => response.json())
+        .then(especialidades => {
+            const especialidade = especialidades.find(e => e.especialidade_id == especialidadeId);
+            const local = especialidade.locais.find(l => l.local_id == localId);
+            
+            document.getElementById('detalhesContent').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Informações do Local</h6>
+                        <p><strong>Nome:</strong> ${local.nome_local}</p>
+                        <p><strong>Tipo:</strong> <span class="badge bg-info">${local.tipo_local}</span></p>
+                        <p><strong>Endereço:</strong> ${local.endereco}</p>
+                        <p><strong>Capacidade:</strong> <span class="badge bg-success">${local.capacidade_alunos} alunos</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Médico Responsável</h6>
+                        <p><strong>Nome:</strong> ${local.medico_responsavel.nome}</p>
+                        <p><strong>CRM:</strong> ${local.medico_responsavel.crm || 'Não informado'}</p>
+                        <p><strong>Título:</strong> ${local.medico_responsavel.titulo || 'Não informado'}</p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6 class="text-primary">Restrições</h6>
+                        <ul class="list-group">
+                            ${local.restricoes.map(restricao => `<li class="list-group-item"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>${restricao}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            new bootstrap.Modal(document.getElementById('detalhesModal')).show();
+        });
+}
+
+function editarLocal(especialidadeId, localId) {
+    // Implementar edição
+    alert('Funcionalidade de edição será implementada em breve!');
+}
+
+function abrirModalAdicionar() {
+    document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus me-2"></i>Adicionar Local de Estudo';
+    document.getElementById('localForm').reset();
+    new bootstrap.Modal(document.getElementById('localModal')).show();
+}
+
+function exportarLocais() {
+    fetch('/api/especialidades-completas')
+        .then(response => response.json())
+        .then(data => {
+            const csv = [
+                ['Especialidade', 'Local', 'Tipo', 'Responsável', 'CRM', 'Capacidade', 'Restrições'],
+                ...data.flatMap(esp => 
+                    esp.locais.map(local => [
+                        esp.nome_especialidade,
+                        local.nome_local,
+                        local.tipo_local,
+                        local.medico_responsavel.nome,
+                        local.medico_responsavel.crm || '',
+                        local.capacidade_alunos,
+                        local.restricoes.join('; ')
+                    ])
+                )
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'locais-estudo.csv';
+            a.click();
+        });
+}
+
+function importarLocais() {
+    alert('Funcionalidade de importação será implementada em breve!');
+}
+
+// Configurar formulário
+document.getElementById('localForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Funcionalidade de adicionar local será implementada em breve!');
+});
+</script>
+{% endblock %} 

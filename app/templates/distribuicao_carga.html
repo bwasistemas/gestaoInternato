@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}Distribuição de Carga Horária - Internato 2.0 - PVT Internatos{% endblock %}
+{% block page_title %}Distribuição de Carga Horária{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-chart-pie me-2"></i>Visão Geral da Distribuição
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="h2 text-primary">{{ total_alunos }}</div>
+                            <small class="text-muted">Total de Alunos</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="h2 text-success">{{ total_agendas_semana }}</div>
+                            <small class="text-muted">Agendas na Semana</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="h2 text-info">{{ media_carimbos_semana }}</div>
+                            <small class="text-muted">Média Carimbos/Semana</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="h2 text-warning">{{ alunos_em_risco }}</div>
+                            <small class="text-muted">Alunos em Risco</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Distribuição por Especialidade -->
+    <div class="col-xl-6 col-lg-7">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-chart-bar me-2"></i>Distribuição por Especialidade
+                </h6>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-filter me-1"></i>Filtrar
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="filtrarEspecialidade('todas')">Todas</a></li>
+                        {% for especialidade in especialidades %}
+                        <li><a class="dropdown-item" href="#" onclick="filtrarEspecialidade('{{ especialidade.nome_especialidade }}')">{{ especialidade.nome_especialidade }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="tabelaEspecialidades">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Especialidade</th>
+                                <th>Alunos</th>
+                                <th>Agendas</th>
+                                <th>Média Carimbos</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for especialidade in distribuicao_especialidades %}
+                            <tr class="especialidade-row" data-especialidade="{{ especialidade.nome }}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="color-indicator" style="background-color: {{ especialidade.cor }};"></div>
+                                        <strong>{{ especialidade.nome }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ especialidade.total_alunos }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ especialidade.total_agendas }}</span>
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-success" style="width: {{ (especialidade.media_carimbos / 6) * 100 }}%">
+                                            {{ "%.1f"|format(especialidade.media_carimbos) }}/6
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if especialidade.media_carimbos >= 5 %}
+                                        <span class="badge bg-success">Ótimo</span>
+                                    {% elif especialidade.media_carimbos >= 3 %}
+                                        <span class="badge bg-warning">Atenção</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Crítico</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Distribuição por Aluno -->
+    <div class="col-xl-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-success">
+                    <i class="fas fa-user-graduate me-2"></i>Distribuição por Aluno
+                </h6>
+                <div class="input-group input-group-sm" style="width: 200px;">
+                    <input type="text" class="form-control" id="buscaAluno" placeholder="Buscar aluno...">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm" id="tabelaAlunos">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Aluno</th>
+                                <th>Carimbos</th>
+                                <th>Especialidades</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for aluno in distribuicao_alunos %}
+                            <tr class="aluno-row" data-nome="{{ aluno.nome.lower() }}">
+                                <td>
+                                    <strong>{{ aluno.nome }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ aluno.email }}</small>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 15px;">
+                                            <div class="progress-bar {% if aluno.carimbos_semana >= 5 %}bg-success{% elif aluno.carimbos_semana >= 3 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                                 style="width: {{ (aluno.carimbos_semana / 6) * 100 }}%">
+                                            </div>
+                                        </div>
+                                        <small>{{ aluno.carimbos_semana }}/6</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% for especialidade in aluno.especialidades %}
+                                    <span class="badge bg-secondary me-1">{{ especialidade }}</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% if aluno.carimbos_semana >= 6 %}
+                                        <span class="badge bg-success">Completo</span>
+                                    {% elif aluno.carimbos_semana >= 4 %}
+                                        <span class="badge bg-warning">Quase lá</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Em risco</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico de Distribuição Semanal -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-calendar-week me-2"></i>Distribuição Semanal
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for dia in distribuicao_semanal %}
+                    <div class="col-md-2 mb-3">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body text-center">
+                                <h6 class="card-title text-primary">{{ dia.nome }}</h6>
+                                <div class="h4 mb-2">{{ dia.total_agendas }}</div>
+                                <small class="text-muted">Agendas</small>
+                                <div class="mt-2">
+                                    {% for especialidade in dia.especialidades %}
+                                    <span class="badge bg-info me-1">{{ especialidade }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Locais de Estudo - Capacidade -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-hospital me-2"></i>Capacidade dos Locais de Estudo
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for local in locais_estudo %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card border-0">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">{{ local.nome_local }}</h6>
+                                        <small class="text-muted">{{ local.especialidade }}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="h5 mb-0">{{ local.agendas_hoje }}/{{ local.capacidade }}</div>
+                                        <small class="text-muted">Agendas hoje</small>
+                                    </div>
+                                </div>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div class="progress-bar {% if local.ocupacao >= 80 %}bg-danger{% elif local.ocupacao >= 60 %}bg-warning{% else %}bg-success{% endif %}" 
+                                         style="width: {{ local.ocupacao }}%">
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ "%.1f"|format(local.ocupacao) }}% ocupado</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_actions %}
+<button type="button" class="btn btn-info" onclick="exportarRelatorio()">
+    <i class="fas fa-download me-2"></i>Exportar Relatório
+</button>
+<button type="button" class="btn btn-success" onclick="gerarRelatorioPDF()">
+    <i class="fas fa-file-pdf me-2"></i>Gerar PDF
+</button>
+<button type="button" class="btn btn-warning" onclick="atualizarDados()">
+    <i class="fas fa-sync me-2"></i>Atualizar
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filtrarEspecialidade(especialidade) {
+    const rows = document.querySelectorAll('.especialidade-row');
+    
+    rows.forEach(row => {
+        const especialidadeRow = row.dataset.especialidade;
+        
+        if (especialidade === 'todas' || especialidadeRow === especialidade) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function buscarAluno() {
+    const busca = document.getElementById('buscaAluno').value.toLowerCase();
+    const rows = document.querySelectorAll('.aluno-row');
+    
+    rows.forEach(row => {
+        const nome = row.dataset.nome;
+        
+        if (nome.includes(busca)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function exportarRelatorio() {
+    // Implementar exportação para Excel/CSV
+    alert('Funcionalidade de exportação será implementada em breve!');
+}
+
+function gerarRelatorioPDF() {
+    // Implementar geração de PDF
+    alert('Funcionalidade de PDF será implementada em breve!');
+}
+
+function atualizarDados() {
+    location.reload();
+}
+
+// Configurar busca de alunos
+document.getElementById('buscaAluno').addEventListener('keyup', buscarAluno);
+</script>
+
+<style>
+.color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "nome": "Hospital Universitário",
+    "endereco": "Rua das Flores, 123 - Centro",
+    "especialidades": ["Cirurgia Geral", "Ortopedia", "Ginecologia/Obstetrícia"],
+    "responsavel": "Dr. Carlos Silva"
+  },
+  {
+    "id": 2,
+    "nome": "Centro Cirúrgico",
+    "endereco": "Av. Principal, 456 - Zona Sul",
+    "especialidades": ["Cirurgia Geral", "Ortopedia", "Urologia", "Cirurgia Vascular"],
+    "responsavel": "Dr. Ana Santos"
+  },
+  {
+    "id": 3,
+    "nome": "Ambulatório",
+    "endereco": "Rua da Saúde, 789 - Zona Norte",
+    "especialidades": ["Cirurgia Ambulatorial", "Oftalmologia", "Otorrinolaringologia"],
+    "responsavel": "Dr. Maria Oliveira"
+  },
+  {
+    "id": 4,
+    "nome": "UTI",
+    "endereco": "Av. Hospitalar, 321 - Centro",
+    "especialidades": ["Anestesiologia", "Cirurgia Geral"],
+    "responsavel": "Dr. João Costa"
+  },
+  {
+    "id": 5,
+    "nome": "Enfermaria",
+    "endereco": "Rua dos Médicos, 654 - Zona Leste",
+    "especialidades": ["Enfermaria Cirúrgica", "Cirurgia Geral"],
+    "responsavel": "Dr. Pedro Lima"
+  },
+  {
+    "id": 6,
+    "nome": "Pronto Socorro",
+    "endereco": "Av. Emergência, 987 - Centro",
+    "especialidades": ["Cirurgia Geral", "Ortopedia", "Urologia"],
+    "responsavel": "Dr. Fernanda Rocha"
+  },
+  {
+    "id": 7,
+    "nome": "Consultório",
+    "endereco": "Rua dos Consultórios, 147 - Zona Oeste",
+    "especialidades": ["Cirurgia Ambulatorial", "Oftalmologia"],
+    "responsavel": "Dr. Roberto Alves"
+  },
+  {
+    "id": 8,
+    "nome": "Sala de Emergência",
+    "endereco": "Av. Urgência, 258 - Centro",
+    "especialidades": ["Cirurgia Geral", "Ortopedia", "Urologia"],
+    "responsavel": "Dr. Luciana Ferreira"
+  }
+]

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Especialidades - Internato Manager{% endblock %}
+{% block page_title %}Gerenciar Especialidades{% endblock %}
+
+{% block page_actions %}
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEspecialidadeModal">
+    <i class="fas fa-plus me-2"></i>Nova Especialidade
+</button>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-stethoscope me-2"></i>Especialidades Médicas
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if especialidades %}
+                <div class="row">
+                    {% for especialidade in especialidades %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100 border-left-primary">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title text-primary">
+                                            <i class="fas fa-stethoscope me-2"></i>{{ especialidade.nome }}
+                                        </h6>
+                                        <p class="card-text text-muted small">
+                                            <i class="fas fa-users me-1"></i>
+                                            {{ especialidade.alunos_count }} alunos
+                                        </p>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-primary">{{ especialidade.agendas_count }}</span>
+                                        <small class="d-block text-muted">agendas</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-stethoscope fa-3x mb-3"></i>
+                    <h5>Nenhuma especialidade cadastrada</h5>
+                    <p>Adicione a primeira especialidade para começar</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Especialidade -->
+<div class="modal fade" id="addEspecialidadeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-stethoscope me-2"></i>Nova Especialidade
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addEspecialidadeForm" method="POST" action="/api/especialidades">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome da Especialidade</label>
+                        <input type="text" class="form-control" id="nome" name="nome" required>
+                        <div class="form-text">Ex: Cirurgia Geral, Cardiologia, etc.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Configurar formulário de adicionar especialidade
+document.getElementById('addEspecialidadeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        nome: formData.get('nome')
+    };
+    
+    fetch('/api/especialidades', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.message) {
+            alert('Especialidade adicionada com sucesso!');
+            location.reload();
+        }
+    })
+    .catch(error => {
+        alert('Erro ao adicionar especialidade.');
+    });
+});
+</script>
+{% endblock %} 

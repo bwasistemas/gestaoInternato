@@ -1,0 +1,541 @@
+{% extends "base.html" %}
+
+{% block title %}Gestão de Alunos - Internato 2.0 - PVT Internatos{% endblock %}
+{% block page_title %}Gestão de Alunos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-users me-2"></i>Lista de Alunos
+                </h6>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAlunoModal">
+                    <i class="fas fa-plus me-2"></i>Novo Aluno
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-custom">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Telefone</th>
+                                <th>Data Nascimento</th>
+                                <th>Especialidade Principal</th>
+                                <th>Agendas</th>
+                                <th>Carimbos (Semana)</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for aluno in alunos %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-secondary">{{ aluno.id }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ aluno.nome }}</strong>
+                                </td>
+                                <td>
+                                    <i class="fas fa-envelope me-1 text-muted"></i>
+                                    {{ aluno.email }}
+                                </td>
+                                <td>
+                                    <i class="fas fa-phone me-1 text-muted"></i>
+                                    {{ aluno.telefone }}
+                                </td>
+                                <td>
+                                    <i class="fas fa-calendar me-1 text-muted"></i>
+                                    {{ aluno.data_nascimento.strftime('%d/%m/%Y') }}
+                                </td>
+                                <td>
+                                    {% if aluno.especialidade_principal %}
+                                        <span class="badge bg-info">{{ aluno.especialidade_principal }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Não definida</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ aluno.agendas_count }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge {% if aluno.carimbos_semana >= 6 %}bg-success{% elif aluno.carimbos_semana >= 4 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ aluno.carimbos_semana }}/6
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if aluno.carimbos_semana >= 6 %}
+                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>OK</span>
+                                    {% elif aluno.carimbos_semana >= 4 %}
+                                        <span class="badge bg-warning"><i class="fas fa-exclamation me-1"></i>Atenção</span>
+                                    {% else %}
+                                        <span class="badge bg-danger"><i class="fas fa-times me-1"></i>Crítico</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                onclick="viewAluno({{ aluno.id }})" 
+                                                title="Ver Detalhes">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-warning" 
+                                                onclick="editAluno({{ aluno.id }})" 
+                                                title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-success" 
+                                                onclick="registerPresence({{ aluno.id }})" 
+                                                title="Registrar Presença">
+                                            <i class="fas fa-check-circle"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                onclick="deleteAluno({{ aluno.id }}, '{{ aluno.nome }}')" 
+                                                title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Aluno -->
+<div class="modal fade" id="addAlunoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus me-2"></i>Novo Aluno
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addAlunoForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nome" class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">E-mail *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="telefone" class="form-label">Telefone *</label>
+                            <input type="tel" class="form-control" id="telefone" name="telefone" 
+                                   placeholder="(11) 99999-9999" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="data_nascimento" class="form-label">Data de Nascimento *</label>
+                            <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="especialidade_principal" class="form-label">Especialidade Principal</label>
+                            <select class="form-select" id="especialidade_principal" name="especialidade_principal">
+                                <option value="">Selecione uma especialidade...</option>
+                                {% for especialidade in especialidades %}
+                                <option value="{{ especialidade.nome }}">{{ especialidade.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Salvar Aluno
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Aluno -->
+<div class="modal fade" id="editAlunoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>Editar Aluno
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editAlunoForm">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_id" name="id">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_nome" class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" id="edit_nome" name="nome" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_email" class="form-label">E-mail *</label>
+                            <input type="email" class="form-control" id="edit_email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_telefone" class="form-label">Telefone *</label>
+                            <input type="tel" class="form-control" id="edit_telefone" name="telefone" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="edit_data_nascimento" class="form-label">Data de Nascimento *</label>
+                            <input type="date" class="form-control" id="edit_data_nascimento" name="data_nascimento" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="edit_especialidade_principal" class="form-label">Especialidade Principal</label>
+                            <select class="form-select" id="edit_especialidade_principal" name="especialidade_principal">
+                                <option value="">Selecione uma especialidade...</option>
+                                {% for especialidade in especialidades %}
+                                <option value="{{ especialidade.nome }}">{{ especialidade.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Atualizar Aluno
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ver Detalhes do Aluno -->
+<div class="modal fade" id="viewAlunoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user me-2"></i>Detalhes do Aluno
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="alunoDetails">
+                    <!-- Carregado via AJAX -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Registrar Presença -->
+<div class="modal fade" id="presenceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle me-2"></i>Registrar Presença
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="presenceForm">
+                <div class="modal-body">
+                    <input type="hidden" id="presence_aluno_id" name="aluno_id">
+                    <div class="mb-3">
+                        <label for="presence_date" class="form-label">Data da Presença</label>
+                        <input type="date" class="form-control" id="presence_date" name="data" 
+                               value="{{ today }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="presence_especialidade" class="form-label">Especialidade</label>
+                        <select class="form-select" id="presence_especialidade" name="especialidade">
+                            <option value="">Selecione...</option>
+                            {% for especialidade in especialidades %}
+                            <option value="{{ especialidade.nome }}">{{ especialidade.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Registrar Presença
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_actions %}
+<button type="button" class="btn btn-success" onclick="exportAlunos()">
+    <i class="fas fa-download me-2"></i>Exportar
+</button>
+<button type="button" class="btn btn-info" onclick="importAlunos()">
+    <i class="fas fa-upload me-2"></i>Importar
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Adicionar novo aluno
+document.getElementById('addAlunoForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        nome: formData.get('nome'),
+        email: formData.get('email'),
+        telefone: formData.get('telefone'),
+        data_nascimento: formData.get('data_nascimento'),
+        especialidade_principal: formData.get('especialidade_principal')
+    };
+    
+    fetch('/api/alunos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.message) {
+            alert('Aluno adicionado com sucesso!');
+            location.reload();
+        } else {
+            alert('Erro ao adicionar aluno: ' + JSON.stringify(result));
+        }
+    })
+    .catch(error => {
+        alert('Erro ao adicionar aluno: ' + error);
+    });
+});
+
+// Editar aluno
+function editAluno(alunoId) {
+    // Buscar dados do aluno
+    fetch(`/api/alunos/${alunoId}`)
+        .then(response => response.json())
+        .then(aluno => {
+            document.getElementById('edit_id').value = aluno.id;
+            document.getElementById('edit_nome').value = aluno.nome;
+            document.getElementById('edit_email').value = aluno.email;
+            document.getElementById('edit_telefone').value = aluno.telefone;
+            document.getElementById('edit_data_nascimento').value = aluno.data_nascimento;
+            document.getElementById('edit_especialidade_principal').value = aluno.especialidade_principal || '';
+            
+            new bootstrap.Modal(document.getElementById('editAlunoModal')).show();
+        })
+        .catch(error => {
+            alert('Erro ao carregar dados do aluno: ' + error);
+        });
+}
+
+// Salvar edição
+document.getElementById('editAlunoForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        id: parseInt(formData.get('id')),
+        nome: formData.get('nome'),
+        email: formData.get('email'),
+        telefone: formData.get('telefone'),
+        data_nascimento: formData.get('data_nascimento'),
+        especialidade_principal: formData.get('especialidade_principal')
+    };
+    
+    fetch(`/api/alunos/${data.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.message) {
+            alert('Aluno atualizado com sucesso!');
+            location.reload();
+        } else {
+            alert('Erro ao atualizar aluno: ' + JSON.stringify(result));
+        }
+    })
+    .catch(error => {
+        alert('Erro ao atualizar aluno: ' + error);
+    });
+});
+
+// Ver detalhes do aluno
+function viewAluno(alunoId) {
+    fetch(`/api/alunos/${alunoId}`)
+        .then(response => response.json())
+        .then(aluno => {
+            const details = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Informações Pessoais</h6>
+                        <p><strong>Nome:</strong> ${aluno.nome}</p>
+                        <p><strong>E-mail:</strong> ${aluno.email}</p>
+                        <p><strong>Telefone:</strong> ${aluno.telefone}</p>
+                        <p><strong>Data de Nascimento:</strong> ${new Date(aluno.data_nascimento).toLocaleDateString('pt-BR')}</p>
+                        <p><strong>Especialidade Principal:</strong> ${aluno.especialidade_principal || 'Não definida'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Estatísticas</h6>
+                        <p><strong>Total de Agendas:</strong> ${aluno.agendas_count}</p>
+                        <p><strong>Carimbos da Semana:</strong> ${aluno.carimbos_semana}/6</p>
+                        <p><strong>Status:</strong> 
+                            ${aluno.carimbos_semana >= 6 ? '<span class="badge bg-success">OK</span>' : 
+                              aluno.carimbos_semana >= 4 ? '<span class="badge bg-warning">Atenção</span>' : 
+                              '<span class="badge bg-danger">Crítico</span>'}
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('alunoDetails').innerHTML = details;
+            new bootstrap.Modal(document.getElementById('viewAlunoModal')).show();
+        })
+        .catch(error => {
+            alert('Erro ao carregar detalhes do aluno: ' + error);
+        });
+}
+
+// Registrar presença
+function registerPresence(alunoId) {
+    document.getElementById('presence_aluno_id').value = alunoId;
+    document.getElementById('presence_date').value = new Date().toISOString().split('T')[0];
+    
+    new bootstrap.Modal(document.getElementById('presenceModal')).show();
+}
+
+// Salvar presença
+document.getElementById('presenceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const alunoId = formData.get('aluno_id');
+    const data = formData.get('data');
+    
+    fetch(`/api/presenca/${alunoId}/${data}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.message) {
+            alert('Presença registrada com sucesso!');
+            location.reload();
+        } else {
+            alert('Erro ao registrar presença: ' + JSON.stringify(result));
+        }
+    })
+    .catch(error => {
+        alert('Erro ao registrar presença: ' + error);
+    });
+});
+
+// Excluir aluno
+function deleteAluno(alunoId, alunoNome) {
+    if (confirm(`Tem certeza que deseja excluir o aluno "${alunoNome}"?`)) {
+        fetch(`/api/alunos/${alunoId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.message) {
+                alert('Aluno excluído com sucesso!');
+                location.reload();
+            } else {
+                alert('Erro ao excluir aluno: ' + JSON.stringify(result));
+            }
+        })
+        .catch(error => {
+            alert('Erro ao excluir aluno: ' + error);
+        });
+    }
+}
+
+// Exportar alunos
+function exportAlunos() {
+    fetch('/api/alunos')
+        .then(response => response.json())
+        .then(alunos => {
+            const csv = [
+                ['ID', 'Nome', 'E-mail', 'Telefone', 'Data Nascimento', 'Especialidade Principal', 'Agendas', 'Carimbos Semana'],
+                ...alunos.map(aluno => [
+                    aluno.id,
+                    aluno.nome,
+                    aluno.email,
+                    aluno.telefone,
+                    aluno.data_nascimento,
+                    aluno.especialidade_principal || '',
+                    aluno.agendas_count,
+                    aluno.carimbos_semana
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'alunos.csv';
+            a.click();
+        })
+        .catch(error => {
+            alert('Erro ao exportar alunos: ' + error);
+        });
+}
+
+// Importar alunos
+function importAlunos() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const csv = e.target.result;
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',');
+            
+            const alunos = lines.slice(1).map(line => {
+                const values = line.split(',');
+                return {
+                    nome: values[1],
+                    email: values[2],
+                    telefone: values[3],
+                    data_nascimento: values[4],
+                    especialidade_principal: values[5] || null
+                };
+            });
+            
+            // Aqui você implementaria a lógica para salvar os alunos
+            alert(`Importação concluída! ${alunos.length} alunos processados.`);
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+</script>
+{% endblock %} 

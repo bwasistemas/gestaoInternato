@@ -1,0 +1,1540 @@
+
+{
+  "especialidades": [
+    {
+      "especialidade_id": 1,
+      "nome_especialidade": "Enfermaria Cirúrgica",
+      "codigo_especialidade": "ENF_CIR",
+      "cor_interface": "#FF6B6B",
+      "descricao": "Especialidade focada no cuidado pós-operatório e acompanhamento de pacientes cirúrgicos",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 1,
+          "nome_local": "Enfermaria Cirúrgica",
+          "tipo_local": "Enfermaria",
+          "medico_responsavel": {
+            "nome": "Não especificado",
+            "crm": null,
+            "titulo": null
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 4,
+          "restricoes": [
+            "Máximo 2 alunos por turno",
+            "Obrigatório uso de EPI completo"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 2,
+      "nome_especialidade": "Ortopedia",
+      "codigo_especialidade": "ORTO",
+      "cor_interface": "#4ECDC4",
+      "descricao": "Especialidade médica que cuida do sistema locomotor",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 2,
+          "nome_local": "Bloco Ortopedia - Dr. Lucas",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Lucas",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Apenas alunos a partir do 7º período",
+            "Necessário treinamento em instrumentação cirúrgica"
+          ]
+        },
+        {
+          "local_id": 3,
+          "nome_local": "Bloco Ortopedia - Dr. Antônio",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Antônio",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Apenas alunos a partir do 7º período",
+            "Necessário treinamento em instrumentação cirúrgica"
+          ]
+        },
+        {
+          "local_id": 4,
+          "nome_local": "Bloco Ortopedia - Dr. Rodrigo",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Rodrigo",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Apenas alunos a partir do 7º período",
+            "Necessário treinamento em instrumentação cirúrgica"
+          ]
+        },
+        {
+          "local_id": 5,
+          "nome_local": "Bloco Ortopedia (Face) - Dr. Vinícius Comini",
+          "tipo_local": "Bloco_Especializado",
+          "medico_responsavel": {
+            "nome": "Dr. Vinícius Comini",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 1,
+          "restricoes": [
+            "Apenas alunos do internato",
+            "Especialização em cirurgia de face",
+            "Máximo 1 aluno por procedimento"
+          ]
+        },
+        {
+          "local_id": 6,
+          "nome_local": "Ambulatório Ortopedia - Dr. Alisson",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Alisson",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 7h às 12h"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 3,
+      "nome_especialidade": "Cirurgia Geral",
+      "codigo_especialidade": "CIR_GERAL",
+      "cor_interface": "#45B7D1",
+      "descricao": "Especialidade que abrange procedimentos cirúrgicos gerais",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 7,
+          "nome_local": "Bloco Cirurgia Geral - Dr. Cézar",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Cézar",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 8,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dr. Cézar",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Cézar",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 13h às 17h"
+          ]
+        },
+        {
+          "local_id": 9,
+          "nome_local": "Bloco Cirurgia Geral - Dr. Tyago Inácio",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Tyago Inácio",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 10,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dr. Tyago Inácio",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Tyago Inácio",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 8h às 12h"
+          ]
+        },
+        {
+          "local_id": 11,
+          "nome_local": "Bloco Cirurgia Geral - Dra. Victória",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Victória",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 12,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dra. Victória",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Victória",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 14h às 18h"
+          ]
+        },
+        {
+          "local_id": 13,
+          "nome_local": "Bloco Cirurgia Geral - Dra. Marina",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Marina",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 14,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dra. Marina",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Marina",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 7h às 11h"
+          ]
+        },
+        {
+          "local_id": 15,
+          "nome_local": "Bloco Cirurgia Geral - Dr. Alysson",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Alysson",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 16,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dr. Alysson",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Alysson",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 13h às 17h"
+          ]
+        },
+        {
+          "local_id": 17,
+          "nome_local": "Bloco Cirurgia Geral - Dr. Luis Gustavo",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Luis Gustavo",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 18,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dr. Luis Gustavo",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Luis Gustavo",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 8h às 12h"
+          ]
+        },
+        {
+          "local_id": 19,
+          "nome_local": "Bloco Cirurgia Geral (Bariátrica) - Dr. Henick",
+          "tipo_local": "Bloco_Especializado",
+          "medico_responsavel": {
+            "nome": "Dr. Henick",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 1,
+          "restricoes": [
+            "Apenas alunos do internato",
+            "Especialização em cirurgia bariátrica",
+            "Curso de laparoscopia obrigatório"
+          ]
+        },
+        {
+          "local_id": 20,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dr. Henick",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Henick",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Foco em pré e pós-operatório bariátrico"
+          ]
+        },
+        {
+          "local_id": 21,
+          "nome_local": "Bloco Cirurgia Geral - Dr. Nilder",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Nilder",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 22,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dr. Nilder",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Nilder",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 7h às 11h"
+          ]
+        },
+        {
+          "local_id": 23,
+          "nome_local": "Bloco Cirurgia Geral - Dr. Jhonantan",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Jhonantan",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 24,
+          "nome_local": "Ambulatório de Cirurgia Geral - Dr. Jhonantan",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Jhonantan",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 13h às 17h"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 4,
+      "nome_especialidade": "Ginecologia/Obstetrícia",
+      "codigo_especialidade": "GO",
+      "cor_interface": "#F39C12",
+      "descricao": "Especialidade médica que cuida da saúde da mulher",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 25,
+          "nome_local": "Bloco Cirurgia GO - Dra. Andreia Giroto",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Andreia Giroto",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 26,
+          "nome_local": "Ambulatório de GO - Dra. Andreia Giroto",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Andreia Giroto",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 27,
+          "nome_local": "Bloco Cirurgia GO - Dra. Laryssa",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Laryssa",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 28,
+          "nome_local": "Ambulatório de GO - Dra. Laryssa",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Laryssa",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 29,
+          "nome_local": "Bloco Cirurgia GO - Dr. José Vitor",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. José Vitor",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 30,
+          "nome_local": "Ambulatório de GO - Dr. José Vitor",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. José Vitor",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 31,
+          "nome_local": "Bloco Cirurgia GO - Dr. Gabriel Rodrigues",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Gabriel Rodrigues",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 32,
+          "nome_local": "Ambulatório de GO - Dr. Gabriel Rodrigues",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Gabriel Rodrigues",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 33,
+          "nome_local": "Bloco Cirurgia GO - Dr. José Walisson",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. José Walisson",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 34,
+          "nome_local": "Ambulatório de GO - Dr. José Walisson",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. José Walisson",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 35,
+          "nome_local": "Bloco Cirurgia GO - Dra. Layla",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Layla",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 36,
+          "nome_local": "Ambulatório de GO - Dra. Layla",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Layla",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 37,
+          "nome_local": "Bloco Cirurgia GO - Dr. Cleber",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Cleber",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 38,
+          "nome_local": "Ambulatório de GO - Dr. Cleber",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Cleber",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 39,
+          "nome_local": "Bloco Cirurgia GO - Dr. Francisco Alexandre",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Francisco Alexandre",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 40,
+          "nome_local": "Ambulatório de GO - Dr. Francisco Alexandre",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Francisco Alexandre",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 5,
+      "nome_especialidade": "Otorrinolaringologia",
+      "codigo_especialidade": "OTORRINO",
+      "cor_interface": "#9B59B6",
+      "descricao": "Especialidade médica que cuida de ouvido, nariz e garganta",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 41,
+          "nome_local": "Bloco Cirurgia Otorrino - Dra. Brenda",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Brenda",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia da cabeça e pescoço"
+          ]
+        },
+        {
+          "local_id": 42,
+          "nome_local": "Ambulatório de Otorrino - Dra. Brenda",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Brenda",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 8h às 12h"
+          ]
+        },
+        {
+          "local_id": 43,
+          "nome_local": "Bloco Cirurgia Otorrino - Dra. Ana Carolina",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Ana Carolina",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia da cabeça e pescoço"
+          ]
+        },
+        {
+          "local_id": 44,
+          "nome_local": "Ambulatório de Otorrino - Dra. Ana Carolina",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Ana Carolina",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 13h às 17h"
+          ]
+        },
+        {
+          "local_id": 45,
+          "nome_local": "Bloco Cirurgia Otorrino - Dr. Thiago Souza",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Thiago Souza",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia da cabeça e pescoço"
+          ]
+        },
+        {
+          "local_id": 46,
+          "nome_local": "Ambulatório de Otorrino - Dr. Thiago Souza",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Thiago Souza",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 7h às 11h"
+          ]
+        },
+        {
+          "local_id": 47,
+          "nome_local": "Bloco Cirurgia Otorrino - Dr. Ernani",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Ernani",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia da cabeça e pescoço"
+          ]
+        },
+        {
+          "local_id": 48,
+          "nome_local": "Ambulatório de Otorrino - Dr. Ernani",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Ernani",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 14h às 18h"
+          ]
+        },
+        {
+          "local_id": 49,
+          "nome_local": "Bloco Cirurgia Otorrino - Dra. Fernanda Bastos",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Fernanda Bastos",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia da cabeça e pescoço"
+          ]
+        },
+        {
+          "local_id": 50,
+          "nome_local": "Ambulatório de Otorrino - Dra. Fernanda Bastos",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Fernanda Bastos",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 8h às 12h"
+          ]
+        },
+        {
+          "local_id": 51,
+          "nome_local": "Bloco Cirurgia Otorrino - Dra. Maria Cecília",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Maria Cecília",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia da cabeça e pescoço"
+          ]
+        },
+        {
+          "local_id": 52,
+          "nome_local": "Ambulatório de Otorrino - Dra. Maria Cecília",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Maria Cecília",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 13h às 17h"
+          ]
+        },
+        {
+          "local_id": 53,
+          "nome_local": "Bloco Cirurgia Otorrino - Dr. Marcos Borém",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Marcos Borém",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia da cabeça e pescoço"
+          ]
+        },
+        {
+          "local_id": 54,
+          "nome_local": "Ambulatório de Otorrino - Dr. Marcos Borém",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Marcos Borém",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 7h às 11h"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 6,
+      "nome_especialidade": "Cirurgia Vascular",
+      "codigo_especialidade": "VASCULAR",
+      "cor_interface": "#E74C3C",
+      "descricao": "Especialidade médica que cuida do sistema vascular",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 55,
+          "nome_local": "Bloco Cirurgia Vascular - Dr. Alessandro",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Alessandro",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 7º período",
+            "Necessário conhecimento básico de anatomia vascular"
+          ]
+        },
+        {
+          "local_id": 56,
+          "nome_local": "Ambulatório de Consulta Vascular - Dr. Alessandro",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Alessandro",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 8h às 12h"
+          ]
+        },
+        {
+          "local_id": 57,
+          "nome_local": "Bloco Cirurgia Vascular - Dr. Maurício",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Maurício",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 7º período",
+            "Necessário conhecimento básico de anatomia vascular"
+          ]
+        },
+        {
+          "local_id": 58,
+          "nome_local": "Ambulatório de Consulta Vascular - Dr. Maurício",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Maurício",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 13h às 17h"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 7,
+      "nome_especialidade": "Proctologia",
+      "codigo_especialidade": "PROCTO",
+      "cor_interface": "#8E44AD",
+      "descricao": "Especialidade médica que cuida do sistema digestivo terminal",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 59,
+          "nome_local": "Bloco Proctologia - Dra. Thereza Cristina",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Thereza Cristina",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário curso de ética médica"
+          ]
+        },
+        {
+          "local_id": 60,
+          "nome_local": "Ambulatório de Proctologia - Dra. Thereza Cristina",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Thereza Cristina",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Necessário curso de ética médica"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 8,
+      "nome_especialidade": "Urologia",
+      "codigo_especialidade": "URO",
+      "cor_interface": "#3498DB",
+      "descricao": "Especialidade médica que cuida do sistema urinário",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 61,
+          "nome_local": "Bloco Cirurgia Urologia - Dr. Estevão",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Estevão",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia urológica"
+          ]
+        },
+        {
+          "local_id": 62,
+          "nome_local": "Ambulatório de Urologia - Dr. Estevão",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Estevão",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 8h às 12h"
+          ]
+        },
+        {
+          "local_id": 63,
+          "nome_local": "Bloco Cirurgia Urologia - Dr. Thiago Godinho",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Thiago Godinho",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de anatomia urológica"
+          ]
+        },
+        {
+          "local_id": 64,
+          "nome_local": "Ambulatório de Urologia - Dr. Thiago Godinho",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Thiago Godinho",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 4º período",
+            "Horário: 13h às 17h"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 9,
+      "nome_especialidade": "Cirurgia Pediátrica",
+      "codigo_especialidade": "CIR_PED",
+      "cor_interface": "#F1C40F",
+      "descricao": "Especialidade médica que cuida de cirurgias em crianças",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 65,
+          "nome_local": "Bloco Cirurgia Pediátrica - Dr. Pedro",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Pedro",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 7º período",
+            "Necessário curso de pediatria"
+          ]
+        },
+        {
+          "local_id": 66,
+          "nome_local": "Ambulatório de Cirurgia Pediátrica - Dr. Pedro",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Pedro",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Necessário curso de pediatria"
+          ]
+        },
+        {
+          "local_id": 67,
+          "nome_local": "Bloco Cirurgia Pediátrica - Dr. Marcos Barros",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Marcos Barros",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 7º período",
+            "Necessário curso de pediatria"
+          ]
+        },
+        {
+          "local_id": 68,
+          "nome_local": "Ambulatório de Cirurgia Pediátrica - Dr. Marcos Barros",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Marcos Barros",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Necessário curso de pediatria"
+          ]
+        },
+        {
+          "local_id": 69,
+          "nome_local": "Bloco Cirurgia Pediátrica - Dr. Renato",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dr. Renato",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 7º período",
+            "Necessário curso de pediatria"
+          ]
+        },
+        {
+          "local_id": 70,
+          "nome_local": "Ambulatório de Cirurgia Pediátrica - Dr. Renato",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Renato",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Necessário curso de pediatria"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 10,
+      "nome_especialidade": "Cabeça e Pescoço (Tireoide)",
+      "codigo_especialidade": "CAB_PESC",
+      "cor_interface": "#E67E22",
+      "descricao": "Especialidade médica que cuida de cirurgias de cabeça e pescoço, especialmente tireoide",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 71,
+          "nome_local": "Bloco Cirurgia Tireoide - Dr. Nilder",
+          "tipo_local": "Bloco_Especializado",
+          "medico_responsavel": {
+            "nome": "Dr. Nilder",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 1,
+          "restricoes": [
+            "Apenas alunos do internato",
+            "Especialização em cirurgia de tireoide"
+          ]
+        },
+        {
+          "local_id": 72,
+          "nome_local": "Ambulatório de Cirurgia Tireoide - Dr. Nilder",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Nilder",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Foco em endocrinologia cirúrgica"
+          ]
+        },
+        {
+          "local_id": 73,
+          "nome_local": "Bloco Cirurgia Tireoide - Dr. Vinícius Turano",
+          "tipo_local": "Bloco_Especializado",
+          "medico_responsavel": {
+            "nome": "Dr. Vinícius Turano",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 1,
+          "restricoes": [
+            "Apenas alunos do internato",
+            "Especialização em cirurgia de tireoide"
+          ]
+        },
+        {
+          "local_id": 74,
+          "nome_local": "Ambulatório de Cirurgia Tireoide - Dr. Vinícius Turano",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Vinícius Turano",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Foco em endocrinologia cirúrgica"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 11,
+      "nome_especialidade": "Cirurgia Ambulatorial",
+      "codigo_especialidade": "CIR_AMB",
+      "cor_interface": "#16A085",
+      "descricao": "Especialidade focada em procedimentos cirúrgicos ambulatoriais",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 75,
+          "nome_local": "Ambulatório Cirurgia - Dr. Renato",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Renato",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 8h às 12h"
+          ]
+        },
+        {
+          "local_id": 76,
+          "nome_local": "Ambulatório Cirurgia - Dr. Romildo",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Romildo",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 13h às 17h"
+          ]
+        },
+        {
+          "local_id": 77,
+          "nome_local": "Ambulatório Cirurgia - Dr. Sérgio Rameta",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Sérgio Rameta",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 7h às 11h"
+          ]
+        },
+        {
+          "local_id": 78,
+          "nome_local": "Ambulatório Cirurgia - Dr. Cássio",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Cássio",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 14h às 18h"
+          ]
+        },
+        {
+          "local_id": 79,
+          "nome_local": "Ambulatório Cirurgia - Dr. Evaldo Jenner",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dr. Evaldo Jenner",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 8h às 12h"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 12,
+      "nome_especialidade": "Anestesiologia",
+      "codigo_especialidade": "ANEST",
+      "cor_interface": "#2C3E50",
+      "descricao": "Especialidade médica que cuida da anestesia e controle da dor",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 80,
+          "nome_local": "Risco Anestésico - Dr. Henrique",
+          "tipo_local": "Avaliacao_Risco",
+          "medico_responsavel": {
+            "nome": "Dr. Henrique",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de farmacologia"
+          ]
+        },
+        {
+          "local_id": 81,
+          "nome_local": "Risco Anestésico - Dr. Flávio",
+          "tipo_local": "Avaliacao_Risco",
+          "medico_responsavel": {
+            "nome": "Dr. Flávio",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de farmacologia"
+          ]
+        },
+        {
+          "local_id": 82,
+          "nome_local": "Risco Anestésico - Dr. Matheus",
+          "tipo_local": "Avaliacao_Risco",
+          "medico_responsavel": {
+            "nome": "Dr. Matheus",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de farmacologia"
+          ]
+        },
+        {
+          "local_id": 83,
+          "nome_local": "Risco Anestésico - Dr. Manoel Pessoa",
+          "tipo_local": "Avaliacao_Risco",
+          "medico_responsavel": {
+            "nome": "Dr. Manoel Pessoa",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de farmacologia"
+          ]
+        },
+        {
+          "local_id": 84,
+          "nome_local": "Risco Anestésico - Dra. Fernanda Bastos",
+          "tipo_local": "Avaliacao_Risco",
+          "medico_responsavel": {
+            "nome": "Dra. Fernanda Bastos",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de farmacologia"
+          ]
+        },
+        {
+          "local_id": 85,
+          "nome_local": "Risco Anestésico - Dr. Yvily",
+          "tipo_local": "Avaliacao_Risco",
+          "medico_responsavel": {
+            "nome": "Dr. Yvily",
+            "crm": "A definir",
+            "titulo": "Dr."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 2,
+          "restricoes": [
+            "Alunos a partir do 6º período",
+            "Necessário conhecimento básico de farmacologia"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 13,
+      "nome_especialidade": "Oftalmologia",
+      "codigo_especialidade": "OFTALMO",
+      "cor_interface": "#27AE60",
+      "descricao": "Especialidade médica que cuida da saúde dos olhos",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 86,
+          "nome_local": "Bloco Cirurgia Oftalmologia - Dra. Ariadna",
+          "tipo_local": "Bloco_Cirurgico",
+          "medico_responsavel": {
+            "nome": "Dra. Ariadna",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 1,
+          "restricoes": [
+            "Apenas alunos do internato",
+            "Especialização em oftalmologia",
+            "Máximo 1 aluno por procedimento"
+          ]
+        }
+      ]
+    },
+    {
+      "especialidade_id": 14,
+      "nome_especialidade": "Pneumologia",
+      "codigo_especialidade": "PNEUMO",
+      "cor_interface": "#34495E",
+      "descricao": "Especialidade médica que cuida do sistema respiratório",
+      "ativo": true,
+      "locais": [
+        {
+          "local_id": 87,
+          "nome_local": "Ambulatório de Pneumologia - Dra. Luana",
+          "tipo_local": "Ambulatorio",
+          "medico_responsavel": {
+            "nome": "Dra. Luana",
+            "crm": "A definir",
+            "titulo": "Dra."
+          },
+          "endereco": "A definir",
+          "capacidade_alunos": 3,
+          "restricoes": [
+            "Alunos a partir do 5º período",
+            "Horário: 8h às 12h"
+          ]
+        }
+      ]
+    }
+  ]
+}

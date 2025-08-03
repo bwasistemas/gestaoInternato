@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Escalas</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Aluno</th>
+            <th>Especialidade</th>
+            <th>Médico</th>
+            <th>Período</th>
+            <th>Atividade</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for schedule in schedules %}
+        <tr>
+            <td>{{ schedule.aluno.nome }}</td>
+            <td>{{ schedule.especialidade.nome }}</td>
+            <td>{{ schedule.medico.nome }}</td>
+            <td>{{ schedule.periodo.nome }}</td>
+            <td>{{ schedule.tipo_atividade }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

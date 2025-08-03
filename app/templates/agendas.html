@@ -1,0 +1,867 @@
+{% extends "base.html" %}
+
+{% block title %}Agendas - Internato 2.0 - PVT Internatos{% endblock %}
+{% block page_title %}Gerenciar Agendas{% endblock %}
+
+{% block content %}
+<!-- Cards de Estatísticas -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total de Agendas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ agendas|length }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Agendas Hoje
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ agendas|selectattr('data', 'equalto', today)|list|length }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Presenças Registradas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ agendas|selectattr('presenca', 'equalto', true)|list|length }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Carimbos Registrados
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ agendas|selectattr('carimbo', 'equalto', true)|list|length }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-stamp fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-calendar me-2"></i>Agendas
+                </h6>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="abrirModalAgenda()">
+                        <i class="fas fa-plus me-2"></i>Nova Agenda
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="abrirModalAgendaLote()">
+                        <i class="fas fa-layer-group me-2"></i>Criar em Lote
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="abrirModalExclusaoLote()">
+                        <i class="fas fa-trash me-2"></i>Excluir em Lote
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="filtroData" class="form-label">Filtrar por Data:</label>
+                        <input type="date" class="form-control" id="filtroData" onchange="filtrarAgendas()">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtroEspecialidade" class="form-label">Filtrar por Especialidade:</label>
+                        <select class="form-select" id="filtroEspecialidade" onchange="filtrarAgendas()">
+                            <option value="">Todas as Especialidades</option>
+                            {% for especialidade in especialidades %}
+                            <option value="{{ especialidade.nome_especialidade }}">{{ especialidade.nome_especialidade }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtroAluno" class="form-label">Filtrar por Aluno:</label>
+                        <select class="form-select" id="filtroAluno" onchange="filtrarAgendas()">
+                            <option value="">Todos os Alunos</option>
+                            {% for aluno in alunos %}
+                            <option value="{{ aluno.nome }}">{{ aluno.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filtroStatus" class="form-label">Filtrar por Status:</label>
+                        <select class="form-select" id="filtroStatus" onchange="filtrarAgendas()">
+                            <option value="">Todos os Status</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="presente">Presente</option>
+                            <option value="carimbado">Carimbado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Visualização em Cards -->
+                <div class="row" id="agendasCards">
+                    {% for agenda in agendas %}
+                    <div class="col-lg-4 col-md-6 mb-4 agenda-card" 
+                         data-data="{{ agenda.data.isoformat() }}"
+                         data-especialidade="{{ agenda.especialidade }}"
+                         data-aluno="{{ agenda.aluno_nome }}"
+                         data-status="{{ 'presente' if agenda.presenca else 'carimbado' if agenda.carimbo else 'pendente' }}">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-header bg-transparent">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input agenda-checkbox" type="checkbox" 
+                                               value="{{ agenda.id }}" id="agenda_{{ agenda.id }}">
+                                        <label class="form-check-label" for="agenda_{{ agenda.id }}">
+                                            <small class="text-muted">Selecionar</small>
+                                        </label>
+                                    </div>
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-calendar-day me-2"></i>{{ agenda.data.strftime('%d/%m/%Y') }}
+                                    </h6>
+                                    <span class="badge bg-info">{{ agenda.turno }}</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <h6 class="card-title">{{ agenda.aluno_nome }}</h6>
+                                    <small class="text-muted">{{ agenda.email }}</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <span class="badge bg-primary">{{ agenda.especialidade }}</span>
+                                    <br>
+                                    <small class="text-muted">{{ agenda.local_estudo_nome }}</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <strong>Responsável:</strong> {{ agenda.responsavel }}
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        {% if agenda.presenca %}
+                                            <span class="badge bg-success"><i class="fas fa-check me-1"></i>Presente</span>
+                                        {% elif agenda.carimbo %}
+                                            <span class="badge bg-warning"><i class="fas fa-stamp me-1"></i>Carimbado</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary"><i class="fas fa-clock me-1"></i>Pendente</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-info" onclick="verDetalhesAgenda({{ agenda.id }})">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="excluirAgenda({{ agenda.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                {% if agenda.observacoes %}
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-comment me-1"></i>{{ agenda.observacoes[:50] }}{% if agenda.observacoes|length > 50 %}...{% endif %}
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Visualização em Tabela (Alternativa) -->
+                <div class="table-responsive d-none" id="agendasTable">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Turno</th>
+                                <th>Aluno</th>
+                                <th>Especialidade</th>
+                                <th>Local de Estudo</th>
+                                <th>Responsável</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for agenda in agendas %}
+                            <tr class="agenda-row" 
+                                data-data="{{ agenda.data.isoformat() }}"
+                                data-especialidade="{{ agenda.especialidade }}"
+                                data-aluno="{{ agenda.aluno_nome }}"
+                                data-status="{{ 'presente' if agenda.presenca else 'carimbado' if agenda.carimbo else 'pendente' }}">
+                                <td>
+                                    <strong>{{ agenda.data.strftime('%d/%m/%Y') }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ agenda.data.strftime('%A') }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ agenda.turno }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ agenda.aluno_nome }}</strong>
+                                    <br>
+                                    <small class="text-muted">ID: {{ agenda.aluno_id }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ agenda.especialidade }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ agenda.local_estudo_nome }}</strong>
+                                    <br>
+                                    <small class="text-muted">ID: {{ agenda.local_estudo_id }}</small>
+                                </td>
+                                <td>{{ agenda.responsavel }}</td>
+                                <td>
+                                    {% if agenda.presenca %}
+                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Presente</span>
+                                    {% elif agenda.carimbo %}
+                                        <span class="badge bg-warning"><i class="fas fa-stamp me-1"></i>Carimbado</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary"><i class="fas fa-clock me-1"></i>Pendente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="verDetalhesAgenda({{ agenda.id }})">
+                                        <i class="fas fa-eye me-1"></i>Ver
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="excluirAgenda({{ agenda.id }})">
+                                        <i class="fas fa-trash me-1"></i>Excluir
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if not agendas %}
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                    <h5>Nenhuma agenda encontrada</h5>
+                    <p>Crie a primeira agenda para começar.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Agenda -->
+<div class="modal fade" id="agendaModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-calendar-plus me-2"></i>Nova Agenda
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="agendaForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="data" class="form-label">Data *</label>
+                                <input type="date" class="form-control" id="data" name="data" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="turno" class="form-label">Turno *</label>
+                                <select class="form-select" id="turno" name="turno" required>
+                                    <option value="">Selecione o turno...</option>
+                                    <option value="Manhã">Manhã</option>
+                                    <option value="Tarde">Tarde</option>
+                                    <option value="Noite">Noite</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="especialidade_id" class="form-label">Especialidade *</label>
+                                <select class="form-select" id="especialidade_id" name="especialidade_id" required onchange="carregarLocaisEstudo()">
+                                    <option value="">Selecione a especialidade...</option>
+                                    {% for especialidade in especialidades %}
+                                    <option value="{{ especialidade.especialidade_id }}">{{ especialidade.nome_especialidade }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="local_estudo_id" class="form-label">Local de Estudo *</label>
+                                <select class="form-select" id="local_estudo_id" name="local_estudo_id" required>
+                                    <option value="">Primeiro selecione a especialidade...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="aluno_id" class="form-label">Aluno *</label>
+                                <select class="form-select" id="aluno_id" name="aluno_id" required>
+                                    <option value="">Selecione o aluno...</option>
+                                    {% for aluno in alunos %}
+                                    <option value="{{ aluno.id }}">{{ aluno.nome }} ({{ aluno.email }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="responsavel" class="form-label">Responsável *</label>
+                                <input type="text" class="form-control" id="responsavel" name="responsavel" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="observacoes" class="form-label">Observações</label>
+                                <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Salvar Agenda
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Criar em Lote -->
+<div class="modal fade" id="agendaLoteModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-layer-group me-2"></i>Criar Agendas em Lote
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="agendaLoteForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="data_inicio" class="form-label">Data Início *</label>
+                                <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="data_fim" class="form-label">Data Fim *</label>
+                                <input type="date" class="form-control" id="data_fim" name="data_fim" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="turno_lote" class="form-label">Turno *</label>
+                                <select class="form-select" id="turno_lote" name="turno" required>
+                                    <option value="">Selecione o turno...</option>
+                                    <option value="Manhã">Manhã</option>
+                                    <option value="Tarde">Tarde</option>
+                                    <option value="Noite">Noite</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="especialidade_id_lote" class="form-label">Especialidade *</label>
+                                <select class="form-select" id="especialidade_id_lote" name="especialidade_id" required onchange="carregarLocaisEstudoLote()">
+                                    <option value="">Selecione a especialidade...</option>
+                                    {% for especialidade in especialidades %}
+                                    <option value="{{ especialidade.especialidade_id }}">{{ especialidade.nome_especialidade }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="local_estudo_id_lote" class="form-label">Local de Estudo *</label>
+                                <select class="form-select" id="local_estudo_id_lote" name="local_estudo_id" required>
+                                    <option value="">Primeiro selecione a especialidade...</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="responsavel_lote" class="form-label">Responsável *</label>
+                                <input type="text" class="form-control" id="responsavel_lote" name="responsavel" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Selecionar Alunos *</label>
+                                <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                    {% for aluno in alunos %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="alunos_ids" value="{{ aluno.id }}" id="aluno_{{ aluno.id }}">
+                                        <label class="form-check-label" for="aluno_{{ aluno.id }}">
+                                            {{ aluno.nome }} ({{ aluno.email }})
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="observacoes_lote" class="form-label">Observações</label>
+                                <textarea class="form-control" id="observacoes_lote" name="observacoes" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-layer-group me-2"></i>Criar em Lote
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Exclusão em Lote -->
+<div class="modal fade" id="modalExclusaoLote" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-trash me-2"></i>Excluir Agendas em Lote
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Atenção!</strong> Esta ação irá excluir permanentemente todas as agendas selecionadas.
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label">Agendas Selecionadas:</label>
+                            <div id="agendasSelecionadas" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+                                <p class="text-muted">Nenhuma agenda selecionada</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="confirmarExclusao">
+                                <label class="form-check-label" for="confirmarExclusao">
+                                    <strong>Confirmo que desejo excluir as agendas selecionadas</strong>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="excluirAgendasLote()" id="btnExcluirLote" disabled>
+                    <i class="fas fa-trash me-2"></i>Excluir Selecionadas
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_actions %}
+<button type="button" class="btn btn-info" onclick="exportarAgendas()">
+    <i class="fas fa-download me-2"></i>Exportar
+</button>
+<button type="button" class="btn btn-warning" onclick="limparFiltros()">
+    <i class="fas fa-filter me-2"></i>Limpar Filtros
+</button>
+<button type="button" class="btn btn-secondary" onclick="alternarVisualizacao()">
+    <i class="fas fa-th-large me-2"></i>Alternar Visualização
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let visualizacaoAtual = 'cards'; // 'cards' ou 'tabela'
+
+function filtrarAgendas() {
+    const data = document.getElementById('filtroData').value;
+    const especialidade = document.getElementById('filtroEspecialidade').value;
+    const aluno = document.getElementById('filtroAluno').value;
+    const status = document.getElementById('filtroStatus').value;
+    
+    const elementos = visualizacaoAtual === 'cards' ? 
+        document.querySelectorAll('.agenda-card') : 
+        document.querySelectorAll('.agenda-row');
+    
+    elementos.forEach(elemento => {
+        const dataElemento = elemento.dataset.data;
+        const especialidadeElemento = elemento.dataset.especialidade;
+        const alunoElemento = elemento.dataset.aluno;
+        const statusElemento = elemento.dataset.status;
+        
+        let mostrar = true;
+        
+        if (data && dataElemento !== data) {
+            mostrar = false;
+        }
+        
+        if (especialidade && especialidadeElemento !== especialidade) {
+            mostrar = false;
+        }
+        
+        if (aluno && alunoElemento !== aluno) {
+            mostrar = false;
+        }
+        
+        if (status && statusElemento !== status) {
+            mostrar = false;
+        }
+        
+        elemento.style.display = mostrar ? '' : 'none';
+    });
+}
+
+function limparFiltros() {
+    document.getElementById('filtroData').value = '';
+    document.getElementById('filtroEspecialidade').value = '';
+    document.getElementById('filtroAluno').value = '';
+    document.getElementById('filtroStatus').value = '';
+    filtrarAgendas();
+}
+
+function alternarVisualizacao() {
+    const cardsContainer = document.getElementById('agendasCards');
+    const tableContainer = document.getElementById('agendasTable');
+    
+    if (visualizacaoAtual === 'cards') {
+        cardsContainer.classList.add('d-none');
+        tableContainer.classList.remove('d-none');
+        visualizacaoAtual = 'tabela';
+    } else {
+        cardsContainer.classList.remove('d-none');
+        tableContainer.classList.add('d-none');
+        visualizacaoAtual = 'cards';
+    }
+}
+
+function carregarLocaisEstudo() {
+    const especialidadeId = document.getElementById('especialidade_id').value;
+    const localSelect = document.getElementById('local_estudo_id');
+    
+    if (!especialidadeId) {
+        localSelect.innerHTML = '<option value="">Primeiro selecione a especialidade...</option>';
+        return;
+    }
+    
+    fetch(`/api/locais-estudo/${especialidadeId}`)
+        .then(response => response.json())
+        .then(locais => {
+            localSelect.innerHTML = '<option value="">Selecione o local de estudo...</option>';
+            locais.forEach(local => {
+                localSelect.innerHTML += `<option value="${local.local_id}">${local.nome_local} (Capacidade: ${local.capacidade_alunos})</option>`;
+            });
+        });
+}
+
+function carregarLocaisEstudoLote() {
+    const especialidadeId = document.getElementById('especialidade_id_lote').value;
+    const localSelect = document.getElementById('local_estudo_id_lote');
+    
+    if (!especialidadeId) {
+        localSelect.innerHTML = '<option value="">Primeiro selecione a especialidade...</option>';
+        return;
+    }
+    
+    fetch(`/api/locais-estudo/${especialidadeId}`)
+        .then(response => response.json())
+        .then(locais => {
+            localSelect.innerHTML = '<option value="">Selecione o local de estudo...</option>';
+            locais.forEach(local => {
+                localSelect.innerHTML += `<option value="${local.local_id}">${local.nome_local} (Capacidade: ${local.capacidade_alunos})</option>`;
+            });
+        });
+}
+
+function abrirModalAgenda() {
+    document.getElementById('agendaForm').reset();
+    new bootstrap.Modal(document.getElementById('agendaModal')).show();
+}
+
+function abrirModalAgendaLote() {
+    document.getElementById('agendaLoteForm').reset();
+    new bootstrap.Modal(document.getElementById('agendaLoteModal')).show();
+}
+
+function verDetalhesAgenda(agendaId) {
+    // Implementar visualização de detalhes
+    alert('Funcionalidade de detalhes será implementada em breve!');
+}
+
+function excluirAgenda(agendaId) {
+    if (confirm('Tem certeza que deseja excluir esta agenda?\n\nEsta ação não pode ser desfeita.')) {
+        fetch(`/api/agendas/${agendaId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Erro ao excluir agenda');
+            }
+        })
+        .then(result => {
+            alert('Agenda excluída com sucesso!');
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao excluir agenda: ' + error.message);
+        });
+    }
+}
+
+function abrirModalExclusaoLote() {
+    const checkboxes = document.querySelectorAll('.agenda-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert('Selecione pelo menos uma agenda para excluir!');
+        return;
+    }
+    
+    atualizarListaAgendasSelecionadas();
+    new bootstrap.Modal(document.getElementById('modalExclusaoLote')).show();
+}
+
+function atualizarListaAgendasSelecionadas() {
+    const checkboxes = document.querySelectorAll('.agenda-checkbox:checked');
+    const container = document.getElementById('agendasSelecionadas');
+    
+    if (checkboxes.length === 0) {
+        container.innerHTML = '<p class="text-muted">Nenhuma agenda selecionada</p>';
+        return;
+    }
+    
+    let html = '<div class="list-group">';
+    checkboxes.forEach(checkbox => {
+        const agendaId = checkbox.value;
+        const card = checkbox.closest('.agenda-card');
+        const data = card.querySelector('.text-primary').textContent.trim();
+        const aluno = card.querySelector('.card-title').textContent.trim();
+        const especialidade = card.querySelector('.badge.bg-primary').textContent.trim();
+        
+        html += `
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>${data}</strong> - ${aluno}<br>
+                    <small class="text-muted">${especialidade}</small>
+                </div>
+                <span class="badge bg-secondary">ID: ${agendaId}</span>
+            </div>
+        `;
+    });
+    html += '</div>';
+    
+    container.innerHTML = html;
+}
+
+function excluirAgendasLote() {
+    const checkboxes = document.querySelectorAll('.agenda-checkbox:checked');
+    const confirmacao = document.getElementById('confirmarExclusao').checked;
+    
+    if (!confirmacao) {
+        alert('Você deve confirmar a exclusão marcando a caixa de confirmação!');
+        return;
+    }
+    
+    const agendaIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+    
+    if (agendaIds.length === 0) {
+        alert('Selecione pelo menos uma agenda para excluir!');
+        return;
+    }
+    
+    if (!confirm(`Tem certeza que deseja excluir ${agendaIds.length} agenda(s)?\n\nEsta ação não pode ser desfeita.`)) {
+        return;
+    }
+    
+    fetch('/api/agendas/lote', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(agendaIds)
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Erro ao excluir agendas em lote');
+        }
+    })
+    .then(result => {
+        let mensagem = `Exclusão concluída: ${result.excluidas} agenda(s) excluída(s)`;
+        if (result.erros && result.erros.length > 0) {
+            mensagem += '\n\nErros:\n' + result.erros.join('\n');
+        }
+        alert(mensagem);
+        location.reload();
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao excluir agendas em lote: ' + error.message);
+    });
+}
+
+// Event listeners para checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    // Atualizar lista quando checkboxes mudam
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('agenda-checkbox')) {
+            atualizarListaAgendasSelecionadas();
+        }
+    });
+    
+    // Habilitar/desabilitar botão de exclusão baseado na confirmação
+    document.getElementById('confirmarExclusao').addEventListener('change', function() {
+        const btnExcluir = document.getElementById('btnExcluirLote');
+        const checkboxes = document.querySelectorAll('.agenda-checkbox:checked');
+        btnExcluir.disabled = !this.checked || checkboxes.length === 0;
+    });
+});
+
+function exportarAgendas() {
+    // Fazer download do arquivo XLS
+    window.location.href = '/exportar/agendas-todas';
+}
+
+// Configurar formulários
+document.getElementById('agendaForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        data: formData.get('data'),
+        turno: formData.get('turno'),
+        especialidade_id: parseInt(formData.get('especialidade_id')),
+        local_estudo_id: parseInt(formData.get('local_estudo_id')),
+        aluno_id: parseInt(formData.get('aluno_id')),
+        responsavel: formData.get('responsavel'),
+        observacoes: formData.get('observacoes')
+    };
+    
+    fetch('/api/agendas', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.message) {
+            alert('Agenda criada com sucesso!');
+            location.reload();
+        } else {
+            alert('Erro ao criar agenda: ' + JSON.stringify(result));
+        }
+    })
+    .catch(error => {
+        alert('Erro ao criar agenda: ' + error);
+    });
+});
+
+document.getElementById('agendaLoteForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const alunosIds = Array.from(document.querySelectorAll('input[name="alunos_ids"]:checked'))
+                          .map(cb => parseInt(cb.value));
+    
+    if (alunosIds.length === 0) {
+        alert('Selecione pelo menos um aluno!');
+        return;
+    }
+    
+    const data = {
+        data_inicio: formData.get('data_inicio'),
+        data_fim: formData.get('data_fim'),
+        turno: formData.get('turno'),
+        especialidade_id: parseInt(formData.get('especialidade_id')),
+        local_estudo_id: parseInt(formData.get('local_estudo_id')),
+        alunos_ids: alunosIds,
+        responsavel: formData.get('responsavel'),
+        observacoes: formData.get('observacoes')
+    };
+    
+    fetch('/api/agendas/lote', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.message) {
+            alert(`Agendas criadas em lote: ${result.agendas_criadas} criadas`);
+            if (result.erros && result.erros.length > 0) {
+                alert('Alguns erros ocorreram:\n' + result.erros.join('\n'));
+            }
+            location.reload();
+        } else {
+            alert('Erro ao criar agendas em lote: ' + JSON.stringify(result));
+        }
+    })
+    .catch(error => {
+        alert('Erro ao criar agendas em lote: ' + error);
+    });
+});
+</script>
+{% endblock %} 

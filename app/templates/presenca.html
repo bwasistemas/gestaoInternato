@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}Presença - Internato Manager{% endblock %}
+{% block page_title %}Registro de Presença{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-check-circle me-2"></i>Registrar Presença
+                </h6>
+            </div>
+            <div class="card-body">
+                <form id="presencaForm" method="POST" action="/api/presenca">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="aluno" class="form-label">Aluno</label>
+                            <select class="form-select" id="aluno" name="aluno" required>
+                                <option value="">Selecione o aluno...</option>
+                                {% for aluno in alunos %}
+                                <option value="{{ aluno.nome }}">{{ aluno.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="data" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="data" name="data" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="especialidade" class="form-label">Especialidade (opcional)</label>
+                        <select class="form-select" id="especialidade" name="especialidade">
+                            <option value="">Todas as especialidades</option>
+                            {% for especialidade in especialidades %}
+                            <option value="{{ especialidade.nome }}">{{ especialidade.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Registrar Presença
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-info">
+                    <i class="fas fa-info-circle me-2"></i>Informações
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Como funciona:</h6>
+                    <ul class="mb-0">
+                        <li>Selecione o aluno</li>
+                        <li>Escolha a data</li>
+                        <li>Opcionalmente, filtre por especialidade</li>
+                        <li>O sistema registrará presença e carimbo automaticamente</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Importante:</h6>
+                    <ul class="mb-0">
+                        <li>Presença e carimbo são registrados juntos</li>
+                        <li>Um carimbo por dia é permitido</li>
+                        <li>Mínimo de 6 carimbos por semana</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resultado da busca -->
+<div class="row mt-4" id="resultadoBusca" style="display: none;">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-success">
+                    <i class="fas fa-search me-2"></i>Agendas Encontradas
+                </h6>
+            </div>
+            <div class="card-body">
+                <div id="agendasEncontradas">
+                    <!-- Resultado será carregado aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Histórico de presenças -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-secondary">
+                    <i class="fas fa-history me-2"></i>Histórico de Presenças - Últimos 7 dias
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if presencas_recentes %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Aluno</th>
+                                <th>Especialidade</th>
+                                <th>Local</th>
+                                <th>Turno</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for presenca in presencas_recentes %}
+                            <tr>
+                                <td>{{ presenca.data.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ presenca.aluno }}</td>
+                                <td>{{ presenca.especialidade }}</td>
+                                <td>{{ presenca.local }}</td>
+                                <td>{{ presenca.turno }}</td>
+                                <td>
+                                    {% if presenca.presenca %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Presente
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-times me-1"></i>Ausente
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-3">
+                    <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                    <p>Nenhuma presença registrada nos últimos 7 dias</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Configurar data atual como padrão
+document.getElementById('data').value = new Date().toISOString().split('T')[0];
+
+// Buscar agendas quando selecionar aluno e data
+document.getElementById('aluno').addEventListener('change', buscarAgendas);
+document.getElementById('data').addEventListener('change', buscarAgendas);
+document.getElementById('especialidade').addEventListener('change', buscarAgendas);
+
+function buscarAgendas() {
+    const aluno = document.getElementById('aluno').value;
+    const data = document.getElementById('data').value;
+    const especialidade = document.getElementById('especialidade').value;
+    
+    if (aluno && data) {
+        let url = `/api/agendas/${encodeURIComponent(aluno)}?data_inicio=${data}&data_fim=${data}`;
+        if (especialidade) {
+            url += `&especialidade=${encodeURIComponent(especialidade)}`;
+        }
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(agendas => {
+                mostrarResultado(agendas, aluno, data);
+            })
+            .catch(error => {
+                console.error('Erro ao buscar agendas:', error);
+            });
+    }
+}
+
+function mostrarResultado(agendas, aluno, data) {
+    const resultadoDiv = document.getElementById('resultadoBusca');
+    const contentDiv = document.getElementById('agendasEncontradas');
+    
+    if (agendas.length > 0) {
+        let html = `
+            <h6>Agendas de ${aluno} em ${new Date(data).toLocaleDateString('pt-BR')}</h6>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Turno</th>
+                            <th>Especialidade</th>
+                            <th>Local</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        agendas.forEach(agenda => {
+            html += `
+                <tr>
+                    <td>${agenda.turno}</td>
+                    <td>${agenda.especialidade}</td>
+                    <td>${agenda.local}</td>
+                    <td>
+                        ${agenda.presenca ? 
+                            '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Presente</span>' : 
+                            '<span class="badge bg-secondary"><i class="fas fa-times me-1"></i>Ausente</span>'
+                        }
+                    </td>
+                    <td>
+                        ${!agenda.presenca ? 
+                            `<button class="btn btn-sm btn-success" onclick="registrarPresencaEspecifica('${aluno}', '${agenda.data}', '${agenda.turno}')">
+                                <i class="fas fa-check"></i> Registrar
+                            </button>` : 
+                            '<span class="text-muted">Já registrado</span>'
+                        }
+                    </td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div>';
+        contentDiv.innerHTML = html;
+        resultadoDiv.style.display = 'block';
+    } else {
+        contentDiv.innerHTML = '<p class="text-muted">Nenhuma agenda encontrada para esta data.</p>';
+        resultadoDiv.style.display = 'block';
+    }
+}
+
+function registrarPresencaEspecifica(aluno, data, turno) {
+    if (confirm(`Registrar presença de ${aluno} para ${new Date(data).toLocaleDateString('pt-BR')} - ${turno}?`)) {
+        fetch(`/api/presenca/${encodeURIComponent(aluno)}/${data}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.message) {
+                alert('Presença registrada com sucesso!');
+                location.reload();
+            }
+        })
+        .catch(error => {
+            alert('Erro ao registrar presença.');
+        });
+    }
+}
+
+// Configurar formulário de presença
+document.getElementById('presencaForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const aluno = formData.get('aluno');
+    const data = formData.get('data');
+    
+    if (!aluno || !data) {
+        alert('Por favor, selecione um aluno e uma data.');
+        return;
+    }
+    
+    fetch(`/api/presenca/${encodeURIComponent(aluno)}/${data}`, {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.message) {
+            alert('Presença registrada com sucesso!');
+            location.reload();
+        }
+    })
+    .catch(error => {
+        alert('Erro ao registrar presença.');
+    });
+});
+</script>
+{% endblock %} 

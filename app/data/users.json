@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "email": "admin@pvtinternatos.com",
+    "nome": "Administrador",
+    "data_nascimento": "1980-01-01",
+    "telefone": "(11) 99999-9999",
+    "role": "admin"
+  },
+  {
+    "id": 2,
+    "email": "farley.eleandro@funorte.edu.br",
+    "nome": "Farley Eleandro Costa",
+    "data_nascimento": "1985-05-15",
+    "telefone": "(11) 88888-8888",
+    "role": "coordinator"
+  },
+  {
+    "id": 3,
+    "email": "residente@pvtinternatos.com",
+    "nome": "Residente",
+    "data_nascimento": "1990-08-20",
+    "telefone": "(11) 77777-7777",
+    "role": "resident"
+  }
+] 

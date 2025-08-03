@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Internato 2.0 - PVT Internatos{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Cards de estatísticas -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-white-50 text-uppercase mb-1">
+                        Total de Alunos
+                    </div>
+                    <div class="h2 mb-0 text-white">{{ dashboard.total_alunos }}</div>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-white-50 text-uppercase mb-1">
+                        Agendas Hoje
+                    </div>
+                    <div class="h2 mb-0 text-white">{{ dashboard.total_agendas_hoje }}</div>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-white-50 text-uppercase mb-1">
+                        Especialidades Ativas
+                    </div>
+                    <div class="h2 mb-0 text-white">{{ dashboard.alunos_por_especialidade_hoje|length }}</div>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-white-50 text-uppercase mb-1">
+                        Alunos com < 6 Carimbos
+                    </div>
+                    <div class="h2 mb-0 text-white">{{ dashboard.alunos_com_menos_de_6_carimbos|length }}</div>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Alunos por especialidade hoje -->
+    <div class="col-xl-6 col-lg-7">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-users me-2"></i>Alunos por Especialidade - Hoje
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if dashboard.alunos_por_especialidade_hoje %}
+                    {% for especialidade, alunos in dashboard.alunos_por_especialidade_hoje.items() %}
+                    <div class="mb-3">
+                        <h6 class="text-primary">{{ especialidade }}</h6>
+                        <div class="row">
+                            {% for aluno in alunos %}
+                            <div class="col-md-6 mb-2">
+                                <span class="badge bg-success">
+                                    <i class="fas fa-user me-1"></i>{{ aluno }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted">
+                        <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                        <p>Nenhuma agenda para hoje</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Alunos com menos de 6 carimbos -->
+    <div class="col-xl-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Alunos com Menos de 6 Carimbos
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if dashboard.alunos_com_menos_de_6_carimbos %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th>Carimbos</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for aluno in dashboard.alunos_com_menos_de_6_carimbos %}
+                                <tr>
+                                    <td>{{ aluno.nome }}</td>
+                                    <td>{{ aluno.carimbos }}/6</td>
+                                    <td>
+                                        {% if aluno.carimbos < 3 %}
+                                            <span class="badge bg-danger">Crítico</span>
+                                        {% elif aluno.carimbos < 5 %}
+                                            <span class="badge bg-warning">Atenção</span>
+                                        {% else %}
+                                            <span class="badge bg-info">Quase lá</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-success">
+                        <i class="fas fa-check-circle fa-3x mb-3"></i>
+                        <p>Todos os alunos têm 6 ou mais carimbos!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ações rápidas -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-bolt me-2"></i>Ações Rápidas
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="/agendas" class="btn btn-primary w-100">
+                            <i class="fas fa-calendar-plus me-2"></i>Nova Agenda
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/presenca" class="btn btn-success w-100">
+                            <i class="fas fa-check-circle me-2"></i>Registrar Presença
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/alunos" class="btn btn-info w-100">
+                            <i class="fas fa-user-plus me-2"></i>Novo Aluno
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="/especialidades" class="btn btn-secondary w-100">
+                            <i class="fas fa-stethoscope me-2"></i>Nova Especialidade
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Informações do sistema -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-info-circle me-2"></i>Sobre o Sistema
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Internato 2.0 - PVT Internatos</h6>
+                        <p class="text-muted">
+                            Sistema de Gerenciamento de Internatos desenvolvido para facilitar 
+                            o controle de estágios médicos, agendas e presenças.
+                        </p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Gestão completa de alunos</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Controle de especialidades</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Agendas e presenças</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Dashboard em tempo real</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Funcionalidades Principais</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center p-3">
+                                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                    <h6>Alunos</h6>
+                                    <small class="text-muted">Gestão de residentes</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-3">
+                                    <i class="fas fa-calendar fa-2x text-success mb-2"></i>
+                                    <h6>Agendas</h6>
+                                    <small class="text-muted">Controle de rotinas</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-3">
+                                    <i class="fas fa-stethoscope fa-2x text-info mb-2"></i>
+                                    <h6>Especialidades</h6>
+                                    <small class="text-muted">Áreas médicas</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-3">
+                                    <i class="fas fa-check-circle fa-2x text-warning mb-2"></i>
+                                    <h6>Presença</h6>
+                                    <small class="text-muted">Controle de carimbos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

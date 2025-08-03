@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+{% block title %}Minhas Agendas - Internato 2.0 - PVT Internatos{% endblock %}
+{% block page_title %}Minhas Agendas{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-calendar me-2"></i>Minhas Agendas
+                </h6>
+                <div>
+                    <button type="button" class="btn btn-outline-primary" onclick="filtrarAgendas('todas')">
+                        <i class="fas fa-list me-2"></i>Todas
+                    </button>
+                    <button type="button" class="btn btn-outline-success" onclick="filtrarAgendas('futuras')">
+                        <i class="fas fa-clock me-2"></i>Futuras
+                    </button>
+                    <button type="button" class="btn btn-outline-warning" onclick="filtrarAgendas('semana')">
+                        <i class="fas fa-calendar-week me-2"></i>Esta Semana
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-custom" id="agendasTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Turno</th>
+                                <th>Especialidade</th>
+                                <th>Local</th>
+                                <th>Responsável</th>
+                                <th>Colegas</th>
+                                <th>Status</th>
+                                <th>Observações</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for agenda in agendas %}
+                            <tr class="agenda-row" data-data="{{ agenda.data.isoformat() }}" data-status="{{ 'presente' if agenda.presenca else 'pendente' }}">
+                                <td>
+                                    <strong>{{ agenda.data.strftime('%d/%m/%Y') }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ agenda.data.strftime('%A') }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ agenda.turno }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ agenda.especialidade }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ agenda.local_estudo_nome }}</strong>
+                                    <br>
+                                    <small class="text-muted">ID: {{ agenda.local_estudo_id }}</small>
+                                </td>
+                                <td>
+                                    <strong>{{ agenda.responsavel }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ agenda.especialidade }}</small>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info" onclick="verColegas({{ agenda.aluno_id }}, '{{ agenda.data.isoformat() }}', {{ agenda.especialidade_id }}, {{ agenda.local_estudo_id }})">
+                                        <i class="fas fa-users me-1"></i>Ver Colegas
+                                    </button>
+                                </td>
+                                <td>
+                                    {% if agenda.presenca %}
+                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Presente</span>
+                                    {% elif agenda.carimbo %}
+                                        <span class="badge bg-warning"><i class="fas fa-stamp me-1"></i>Carimbado</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary"><i class="fas fa-clock me-1"></i>Pendente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if agenda.observacoes %}
+                                        <small class="text-muted">{{ agenda.observacoes }}</small>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        {% if not agenda.presenca and agenda.data <= today %}
+                                        <button class="btn btn-sm btn-success" onclick="registrarPresenca({{ agenda.aluno_id }}, '{{ agenda.data.isoformat() }}')">
+                                            <i class="fas fa-check me-1"></i>Registrar Presença
+                                        </button>
+                                        {% elif agenda.presenca %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>Presença Confirmada
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-clock me-1"></i>Aguardando Data
+                                        </span>
+                                        {% endif %}
+                                        
+                                        <button type="button" class="btn btn-sm btn-info" onclick="verColegas({{ agenda.aluno_id }}, '{{ agenda.data.isoformat() }}', {{ agenda.especialidade_id }}, {{ agenda.local_estudo_id }})">
+                                            <i class="fas fa-users me-1"></i>Ver Colegas
+                                        </button>
+                                        
+                                        {% if agenda.observacoes %}
+                                        <button type="button" class="btn btn-sm btn-outline-info" onclick="verObservacoes('{{ agenda.observacoes }}')">
+                                            <i class="fas fa-eye me-1"></i>Ver Observações
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% if not agendas %}
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                    <h5>Nenhuma agenda encontrada</h5>
+                    <p>Você ainda não tem agendas cadastradas.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Colegas -->
+<div class="modal fade" id="colegasModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-users me-2"></i>Colegas na Agenda
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="colegasList">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando colegas...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Registrar Presença -->
+<div class="modal fade" id="presenceModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle me-2"></i>Registrar Presença
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="presenceForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">Detalhes da Agenda</h6>
+                            <div id="agendaDetails"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary mb-3">Observações da Presença *</h6>
+                            <div class="mb-3">
+                                <label for="presenca_observacoes" class="form-label">Descreva suas atividades realizadas:</label>
+                                <textarea class="form-control" id="presenca_observacoes" name="observacoes" rows="4" 
+                                          placeholder="Ex: Participou de cirurgia de apendicite, auxiliou na preparação do paciente, observou técnicas cirúrgicas..." 
+                                          required></textarea>
+                                <div class="form-text">Este campo é obrigatório para registrar sua presença.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="presenca_horas" class="form-label">Horas de Participação:</label>
+                                <select class="form-select" id="presenca_horas" name="horas" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="2">2 horas</option>
+                                    <option value="4">4 horas</option>
+                                    <option value="6">6 horas</option>
+                                    <option value="8">8 horas</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="presenca_tipo" class="form-label">Tipo de Participação:</label>
+                                <select class="form-select" id="presenca_tipo" name="tipo" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="observacao">Observação</option>
+                                    <option value="participacao">Participação Ativa</option>
+                                    <option value="assistencia">Assistência</option>
+                                    <option value="procedimento">Procedimento</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-2"></i>Confirmar Presença
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_actions %}
+<button type="button" class="btn btn-info" onclick="window.location.href='/aluno-dashboard'">
+    <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
+</button>
+<button type="button" class="btn btn-primary" onclick="exportarAgendas()">
+    <i class="fas fa-download me-2"></i>Exportar Agendas
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filtrarAgendas(tipo) {
+    const rows = document.querySelectorAll('.agenda-row');
+    const hoje = new Date();
+    const inicioSemana = new Date(hoje);
+    inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+    const fimSemana = new Date(inicioSemana);
+    fimSemana.setDate(inicioSemana.getDate() + 6);
+    
+    rows.forEach(row => {
+        const dataAgenda = new Date(row.dataset.data);
+        const status = row.dataset.status;
+        
+        let mostrar = true;
+        
+        switch(tipo) {
+            case 'futuras':
+                mostrar = dataAgenda >= hoje;
+                break;
+            case 'semana':
+                mostrar = dataAgenda >= inicioSemana && dataAgenda <= fimSemana;
+                break;
+            case 'todas':
+            default:
+                mostrar = true;
+                break;
+        }
+        
+        row.style.display = mostrar ? '' : 'none';
+    });
+    
+    // Atualizar botões ativos
+    document.querySelectorAll('.btn-outline-primary, .btn-outline-success, .btn-outline-warning').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+}
+
+function verObservacoes(observacoes) {
+    alert('Observações da Agenda:\n\n' + observacoes);
+}
+
+function verColegas(alunoId, data, especialidadeId, localId) {
+    fetch(`/api/colegas/${alunoId}/${data}/${especialidadeId}/${localId}`)
+        .then(response => response.json())
+        .then(colegas => {
+            const content = document.getElementById('colegasList');
+            let html = `
+                <h6 class="text-primary mb-3">Colegas na Mesma Agenda</h6>
+                <p><strong>Data:</strong> ${new Date(data).toLocaleDateString('pt-BR')}</p>
+                <p><strong>Especialidade ID:</strong> ${especialidadeId}</p>
+                <p><strong>Local ID:</strong> ${localId}</p>
+                <hr>
+            `;
+            
+            if (colegas.length > 0) {
+                html += '<div class="list-group">';
+                colegas.forEach(colega => {
+                    html += `
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-user me-2"></i>
+                                    <strong>${colega.nome}</strong>
+                                </div>
+                                <small class="text-muted">Turno: ${colega.turno}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            } else {
+                html += '<p class="text-muted">Nenhum colega no mesmo local neste horário.</p>';
+            }
+            
+            content.innerHTML = html;
+            new bootstrap.Modal(document.getElementById('colegasModal')).show();
+        })
+        .catch(error => {
+            console.error('Erro ao buscar colegas:', error);
+            alert('Erro ao buscar colegas. Tente novamente.');
+        });
+}
+
+function registrarPresenca(alunoId, data) {
+    // Buscar detalhes da agenda
+    fetch(`/api/agendas/${alunoId}?data_inicio=${data}&data_fim=${data}`)
+        .then(response => response.json())
+        .then(agendas => {
+            if (agendas.length > 0) {
+                const agenda = agendas[0];
+                document.getElementById('agendaDetails').innerHTML = `
+                    <div class="alert alert-info">
+                        <strong>Data:</strong> ${new Date(agenda.data).toLocaleDateString('pt-BR')}<br>
+                        <strong>Turno:</strong> ${agenda.turno}<br>
+                        <strong>Especialidade:</strong> ${agenda.especialidade}<br>
+                        <strong>Local:</strong> ${agenda.local_estudo_nome}<br>
+                        <strong>Responsável:</strong> ${agenda.responsavel}
+                    </div>
+                `;
+                
+                // Configurar formulário
+                const form = document.getElementById('presenceForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const observacoes = document.getElementById('presenca_observacoes').value;
+                    const horas = document.getElementById('presenca_horas').value;
+                    const tipo = document.getElementById('presenca_tipo').value;
+                    
+                    if (!observacoes.trim()) {
+                        alert('Por favor, preencha as observações da presença.');
+                        return;
+                    }
+                    
+                    if (!horas || !tipo) {
+                        alert('Por favor, preencha todos os campos obrigatórios.');
+                        return;
+                    }
+                    
+                    const presencaData = {
+                        aluno_id: alunoId,
+                        data: data,
+                        observacoes: observacoes,
+                        horas: parseInt(horas),
+                        tipo: tipo
+                    };
+                    
+                    fetch(`/api/presenca/${alunoId}/${data}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(presencaData)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.message) {
+                            alert('Presença registrada com sucesso!');
+                            location.reload();
+                        } else {
+                            alert('Erro ao registrar presença: ' + JSON.stringify(result));
+                        }
+                    })
+                    .catch(error => {
+                        alert('Erro ao registrar presença: ' + error);
+                    });
+                };
+                
+                new bootstrap.Modal(document.getElementById('presenceModal')).show();
+            }
+        })
+        .catch(error => {
+            alert('Erro ao carregar detalhes da agenda: ' + error);
+        });
+}
+
+function verColegas(alunoId, data, especialidadeId, localId) {
+    // Buscar colegas via API
+    fetch(`/api/colegas/${alunoId}/${data}/${especialidadeId}/${localId}`)
+        .then(response => response.json())
+        .then(colegas => {
+            const colegasList = document.getElementById('colegasList');
+            
+            if (colegas.length === 0) {
+                colegasList.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-users fa-2x mb-3"></i>
+                        <h6>Nenhum colega encontrado</h6>
+                        <p>Você será o único aluno neste local nesta data.</p>
+                    </div>
+                `;
+            } else {
+                let html = '<div class="list-group">';
+                colegas.forEach(colega => {
+                    html += `
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${colega.nome}</strong>
+                                <br>
+                                <small class="text-muted">Turno: ${colega.turno}</small>
+                            </div>
+                            <span class="badge bg-info">${colega.turno}</span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                colegasList.innerHTML = html;
+            }
+            
+            new bootstrap.Modal(document.getElementById('colegasModal')).show();
+        })
+        .catch(error => {
+            console.error('Erro ao buscar colegas:', error);
+            document.getElementById('colegasList').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Erro ao carregar colegas. Tente novamente.
+                </div>
+            `;
+            new bootstrap.Modal(document.getElementById('colegasModal')).show();
+        });
+}
+
+function exportarAgendas() {
+    // Buscar ID do aluno logado
+    const alunoId = {{ user.id }};
+    
+    // Fazer download do arquivo XLS
+    window.location.href = `/exportar/agendas-aluno/${alunoId}`;
+}
+
+// Filtrar por futuras por padrão
+document.addEventListener('DOMContentLoaded', function() {
+    filtrarAgendas('futuras');
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,656 @@
+{% extends "base.html" %}
+
+{% block title %}Agenda Semanal - Internato 2.0 - PVT Internatos{% endblock %}
+{% block page_title %}Agenda Semanal{% endblock %}
+
+{% block content %}
+<!-- Controles de Navegação -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-calendar-week me-2"></i>Controles da Semana
+                </h6>
+                <div>
+                    <button type="button" class="btn btn-outline-primary" onclick="semanaAnterior()">
+                        <i class="fas fa-chevron-left me-2"></i>Semana Anterior
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="semanaAtual()">
+                        <i class="fas fa-calendar-day me-2"></i>Semana Atual
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="semanaProxima()">
+                        <i class="fas fa-chevron-right me-2"></i>Próxima Semana
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="semanaSelecionada" class="form-label">Selecionar Semana:</label>
+                        <input type="week" class="form-control" id="semanaSelecionada" onchange="carregarSemana()">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="filtroEspecialidade" class="form-label">Filtrar por Especialidade:</label>
+                        <select class="form-select" id="filtroEspecialidade" onchange="filtrarSemana()">
+                            <option value="">Todas as Especialidades</option>
+                            {% for especialidade in especialidades %}
+                            <option value="{{ especialidade.nome_especialidade }}">{{ especialidade.nome_especialidade }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="filtroLocal" class="form-label">Filtrar por Local:</label>
+                        <select class="form-select" id="filtroLocal" onchange="filtrarSemana()">
+                            <option value="">Todos os Locais</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estatísticas da Semana -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total de Agendas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalAgendas">0</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Alunos Ativos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="alunosAtivos">0</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Locais Utilizados
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="locaisUtilizados">0</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-hospital fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Presenças Registradas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="presencasRegistradas">0</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visualização Semanal -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-calendar-alt me-2"></i>Agenda Semanal - <span id="periodoSemana">Semana Atual</span>
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="tabelaSemanal">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 150px;">Aluno</th>
+                                <th style="width: 120px;">Segunda</th>
+                                <th style="width: 120px;">Terça</th>
+                                <th style="width: 120px;">Quarta</th>
+                                <th style="width: 120px;">Quinta</th>
+                                <th style="width: 120px;">Sexta</th>
+                                <th style="width: 120px;">Sábado</th>
+                                <th style="width: 120px;">Domingo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabelaSemanal">
+                            <!-- Dados serão carregados via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detalhes da Agenda (Modal) -->
+<div class="modal fade" id="detalhesAgendaModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-calendar-day me-2"></i>Detalhes da Agenda
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detalhesAgendaContent">
+                <!-- Conteúdo será carregado via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="editarAgenda()">
+                    <i class="fas fa-edit me-2"></i>Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_actions %}
+<button type="button" class="btn btn-info" onclick="exportarSemana()">
+    <i class="fas fa-download me-2"></i>Exportar Semana
+</button>
+<button type="button" class="btn btn-success" onclick="imprimirSemana()">
+    <i class="fas fa-print me-2"></i>Imprimir
+</button>
+<button type="button" class="btn btn-warning" onclick="limparFiltros()">
+    <i class="fas fa-filter me-2"></i>Limpar Filtros
+</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let semanaAtual = new Date();
+let dadosSemana = [];
+
+// Inicializar com a semana atual
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM carregado, inicializando agenda semanal...');
+    
+    const semanaInput = document.getElementById('semanaSelecionada');
+    if (!semanaInput) {
+        console.error('Elemento semanaSelecionada não encontrado!');
+        return;
+    }
+    
+    // Definir semana 32 de 2025 (4-10 agosto)
+    semanaInput.value = '2025-W32';
+    
+    console.log('Semana selecionada:', semanaInput.value);
+    
+    carregarSemana();
+});
+
+function carregarSemana() {
+    console.log('Iniciando carregarSemana...');
+    
+    const semanaInput = document.getElementById('semanaSelecionada');
+    if (!semanaInput) {
+        console.error('Elemento semanaSelecionada não encontrado!');
+        return;
+    }
+    
+    const [ano, semana] = semanaInput.value.split('-W');
+    console.log('Ano:', ano, 'Semana:', semana);
+    
+    // Definir datas para semana 32 de 2025
+    const inicioSemana = new Date('2025-08-04');
+    const fimSemana = new Date('2025-08-10');
+    
+    // Atualizar período exibido
+    const periodoSemana = document.getElementById('periodoSemana');
+    if (periodoSemana) {
+        periodoSemana.textContent = `${inicioSemana.toLocaleDateString('pt-BR')} a ${fimSemana.toLocaleDateString('pt-BR')}`;
+    }
+    
+    console.log('Carregando semana:', {
+        ano: ano,
+        semana: semana,
+        inicio: inicioSemana.toISOString().split('T')[0],
+        fim: fimSemana.toISOString().split('T')[0]
+    });
+    
+    // Carregar dados da semana
+    const url = `/api/agendas/periodo?data_inicio=${inicioSemana.toISOString().split('T')[0]}&data_fim=${fimSemana.toISOString().split('T')[0]}`;
+    console.log('Fazendo requisição para:', url);
+    
+    fetch(url)
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Dados recebidos:', data.length, 'agendas');
+            console.log('Primeiro dado:', data[0]);
+            dadosSemana = data;
+            atualizarEstatisticas();
+            renderizarTabelaSemanal();
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados da semana:', error);
+            dadosSemana = [];
+            atualizarEstatisticas();
+            renderizarTabelaSemanal();
+        });
+}
+
+function renderizarTabelaSemanal() {
+    const tbody = document.getElementById('corpoTabelaSemanal');
+    if (!tbody) {
+        console.error('Elemento corpoTabelaSemanal não encontrado!');
+        return;
+    }
+    
+    tbody.innerHTML = '';
+    
+    console.log('Renderizando tabela com', dadosSemana.length, 'agendas');
+    
+    if (dadosSemana.length === 0) {
+        console.log('Nenhum dado para renderizar');
+        return;
+    }
+    
+    // Agrupar por aluno
+    const alunosAgrupados = {};
+    dadosSemana.forEach(agenda => {
+        if (!alunosAgrupados[agenda.aluno_id]) {
+            alunosAgrupados[agenda.aluno_id] = {
+                nome: agenda.aluno_nome,
+                email: agenda.email || '',
+                agendas: {}
+            };
+        }
+        
+        const data = new Date(agenda.data);
+        const diaSemana = data.getDay();
+        const nomeDia = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][diaSemana];
+        
+        console.log('Processando agenda:', {
+            data: agenda.data,
+            diaSemana: diaSemana,
+            nomeDia: nomeDia,
+            aluno: agenda.aluno_nome,
+            dataObj: data.toISOString()
+        });
+        
+        alunosAgrupados[agenda.aluno_id].agendas[nomeDia] = agenda;
+    });
+    
+    console.log('Alunos agrupados:', Object.keys(alunosAgrupados).length);
+    console.log('Alunos:', Object.keys(alunosAgrupados));
+    
+    // Renderizar linhas
+    Object.values(alunosAgrupados).forEach(aluno => {
+        const row = document.createElement('tr');
+        
+        // Cabeçalho do aluno
+        const cellAluno = document.createElement('td');
+        cellAluno.innerHTML = `
+            <div>
+                <strong>${aluno.nome}</strong>
+                <br>
+                <small class="text-muted">${aluno.email}</small>
+            </div>
+        `;
+        row.appendChild(cellAluno);
+        
+        // Células dos dias
+        const diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+        diasSemana.forEach(dia => {
+            const cell = document.createElement('td');
+            const agenda = aluno.agendas[dia];
+            
+            if (agenda) {
+                const statusClass = agenda.presenca ? 'bg-success' : agenda.carimbo ? 'bg-warning' : 'bg-secondary';
+                const statusText = agenda.presenca ? 'Presente' : agenda.carimbo ? 'Carimbado' : 'Pendente';
+                
+                cell.innerHTML = `
+                    <div class="agenda-cell" onclick="verDetalhesAgenda(${agenda.id})" style="cursor: pointer;">
+                        <div class="text-center">
+                            <div class="badge ${statusClass} mb-1">${agenda.turno}</div>
+                            <br>
+                            <small class="text-primary">${agenda.especialidade}</small>
+                            <br>
+                            <small class="text-muted">${agenda.local_estudo_nome}</small>
+                            <br>
+                            <small class="text-info">${agenda.responsavel}</small>
+                            <br>
+                            <span class="badge ${statusClass}">${statusText}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                cell.innerHTML = '<div class="text-center text-muted">-</div>';
+            }
+            
+            row.appendChild(cell);
+        });
+        
+        tbody.appendChild(row);
+    });
+    
+    console.log('Tabela renderizada com', tbody.children.length, 'linhas');
+}
+
+function atualizarEstatisticas() {
+    const totalAgendas = dadosSemana.length;
+    const alunosUnicos = new Set(dadosSemana.map(a => a.aluno_id)).size;
+    const locaisUnicos = new Set(dadosSemana.map(a => a.local_estudo_id)).size;
+    const presencas = dadosSemana.filter(a => a.presenca).length;
+    
+    console.log('Atualizando estatísticas:', {
+        totalAgendas,
+        alunosUnicos,
+        locaisUnicos,
+        presencas,
+        dadosSemana: dadosSemana.length,
+        primeiroDado: dadosSemana[0]
+    });
+    
+    document.getElementById('totalAgendas').textContent = totalAgendas;
+    document.getElementById('alunosAtivos').textContent = alunosUnicos;
+    document.getElementById('locaisUtilizados').textContent = locaisUnicos;
+    document.getElementById('presencasRegistradas').textContent = presencas;
+}
+
+function filtrarSemana() {
+    const especialidade = document.getElementById('filtroEspecialidade').value;
+    const local = document.getElementById('filtroLocal').value;
+    
+    const dadosFiltrados = dadosSemana.filter(agenda => {
+        const matchEspecialidade = !especialidade || agenda.especialidade === especialidade;
+        const matchLocal = !local || agenda.local_estudo_nome === local;
+        return matchEspecialidade && matchLocal;
+    });
+    
+    // Atualizar tabela com dados filtrados
+    renderizarTabelaComDados(dadosFiltrados);
+}
+
+function renderizarTabelaComDados(dados) {
+    // Similar ao renderizarTabelaSemanal mas com dados filtrados
+    const tbody = document.getElementById('corpoTabelaSemanal');
+    tbody.innerHTML = '';
+    
+    const alunosAgrupados = {};
+    dados.forEach(agenda => {
+        if (!alunosAgrupados[agenda.aluno_id]) {
+            alunosAgrupados[agenda.aluno_id] = {
+                nome: agenda.aluno_nome,
+                email: agenda.email || '',
+                agendas: {}
+            };
+        }
+        
+        const data = new Date(agenda.data);
+        const diaSemana = data.getDay();
+        const nomeDia = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][diaSemana];
+        
+        alunosAgrupados[agenda.aluno_id].agendas[nomeDia] = agenda;
+    });
+    
+    Object.values(alunosAgrupados).forEach(aluno => {
+        const row = document.createElement('tr');
+        
+        const cellAluno = document.createElement('td');
+        cellAluno.innerHTML = `
+            <div>
+                <strong>${aluno.nome}</strong>
+                <br>
+                <small class="text-muted">${aluno.email}</small>
+            </div>
+        `;
+        row.appendChild(cellAluno);
+        
+        const diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+        diasSemana.forEach(dia => {
+            const cell = document.createElement('td');
+            const agenda = aluno.agendas[dia];
+            
+            if (agenda) {
+                const statusClass = agenda.presenca ? 'bg-success' : agenda.carimbo ? 'bg-warning' : 'bg-secondary';
+                const statusText = agenda.presenca ? 'Presente' : agenda.carimbo ? 'Carimbado' : 'Pendente';
+                
+                cell.innerHTML = `
+                    <div class="agenda-cell" onclick="verDetalhesAgenda(${agenda.id})" style="cursor: pointer;">
+                        <div class="text-center">
+                            <div class="badge ${statusClass} mb-1">${agenda.turno}</div>
+                            <br>
+                            <small class="text-primary">${agenda.especialidade}</small>
+                            <br>
+                            <small class="text-muted">${agenda.local_estudo_nome}</small>
+                            <br>
+                            <small class="text-info">${agenda.responsavel}</small>
+                            <br>
+                            <span class="badge ${statusClass}">${statusText}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                cell.innerHTML = '<div class="text-center text-muted">-</div>';
+            }
+            
+            row.appendChild(cell);
+        });
+        
+        tbody.appendChild(row);
+    });
+}
+
+function verDetalhesAgenda(agendaId) {
+    const agenda = dadosSemana.find(a => a.id === agendaId);
+    if (!agenda) return;
+    
+    const modal = document.getElementById('detalhesAgendaModal');
+    const content = document.getElementById('detalhesAgendaContent');
+    
+    content.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-primary">Informações da Agenda</h6>
+                <table class="table table-sm">
+                    <tr>
+                        <td><strong>Data:</strong></td>
+                        <td>${new Date(agenda.data).toLocaleDateString('pt-BR')}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Turno:</strong></td>
+                        <td>${agenda.turno}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aluno:</strong></td>
+                        <td>${agenda.aluno_nome}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Especialidade:</strong></td>
+                        <td>${agenda.especialidade}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Local:</strong></td>
+                        <td>${agenda.local_estudo_nome}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Responsável:</strong></td>
+                        <td>${agenda.responsavel}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-primary">Status</h6>
+                <div class="mb-3">
+                    <span class="badge ${agenda.presenca ? 'bg-success' : 'bg-secondary'} me-2">
+                        ${agenda.presenca ? 'Presente' : 'Não Presente'}
+                    </span>
+                    <span class="badge ${agenda.carimbo ? 'bg-warning' : 'bg-secondary'}">
+                        ${agenda.carimbo ? 'Carimbado' : 'Não Carimbado'}
+                    </span>
+                </div>
+                ${agenda.observacoes ? `
+                <h6 class="text-primary">Observações</h6>
+                <p class="text-muted">${agenda.observacoes}</p>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    
+    new bootstrap.Modal(modal).show();
+}
+
+function semanaAnterior() {
+    const semanaInput = document.getElementById('semanaSelecionada');
+    const [ano, semana] = semanaInput.value.split('-W');
+    const novaSemana = parseInt(semana) - 1;
+    semanaInput.value = `${ano}-W${String(novaSemana).padStart(2, '0')}`;
+    carregarSemana();
+}
+
+function semanaAtual() {
+    const hoje = new Date();
+    const inicioSemana = new Date(hoje);
+    inicioSemana.setDate(hoje.getDate() - hoje.getDay() + 1);
+    
+    const semanaInput = document.getElementById('semanaSelecionada');
+    const ano = inicioSemana.getFullYear();
+    const semana = Math.ceil((inicioSemana.getDate() + new Date(inicioSemana.getFullYear(), 0, 1).getDay()) / 7);
+    semanaInput.value = `${ano}-W${String(semana).padStart(2, '0')}`;
+    carregarSemana();
+}
+
+function semanaProxima() {
+    const semanaInput = document.getElementById('semanaSelecionada');
+    const [ano, semana] = semanaInput.value.split('-W');
+    const novaSemana = parseInt(semana) + 1;
+    semanaInput.value = `${ano}-W${String(novaSemana).padStart(2, '0')}`;
+    carregarSemana();
+}
+
+function limparFiltros() {
+    document.getElementById('filtroEspecialidade').value = '';
+    document.getElementById('filtroLocal').value = '';
+    renderizarTabelaSemanal();
+}
+
+function exportarSemana() {
+    // Buscar datas da semana atual
+    const semanaInput = document.getElementById('semanaSelecionada');
+    const [ano, semana] = semanaInput.value.split('-W');
+    
+    // Definir datas para semana 32 de 2025
+    const dataInicio = '2025-08-04';
+    const dataFim = '2025-08-10';
+    
+    // Fazer download do arquivo XLS
+    window.location.href = `/exportar/agenda-semanal?data_inicio=${dataInicio}&data_fim=${dataFim}`;
+}
+
+function imprimirSemana() {
+    window.print();
+}
+
+function editarAgenda() {
+    // Implementar edição
+    alert('Funcionalidade de edição será implementada em breve!');
+}
+
+// Carregar locais quando especialidade for selecionada
+document.getElementById('filtroEspecialidade').addEventListener('change', function() {
+    const especialidade = this.value;
+    const localSelect = document.getElementById('filtroLocal');
+    
+    if (!especialidade) {
+        localSelect.innerHTML = '<option value="">Todos os Locais</option>';
+        return;
+    }
+    
+    // Buscar locais da especialidade
+    fetch(`/api/especialidades-completas`)
+        .then(response => response.json())
+        .then(especialidades => {
+            const esp = especialidades.find(e => e.nome_especialidade === especialidade);
+            localSelect.innerHTML = '<option value="">Todos os Locais</option>';
+            
+            if (esp && esp.locais) {
+                esp.locais.forEach(local => {
+                    localSelect.innerHTML += `<option value="${local.nome_local}">${local.nome_local}</option>`;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao carregar locais:', error);
+            localSelect.innerHTML = '<option value="">Todos os Locais</option>';
+        });
+});
+</script>
+
+<style>
+.agenda-cell {
+    transition: all 0.2s;
+    border-radius: 8px;
+    padding: 8px;
+    min-height: 80px;
+}
+
+.agenda-cell:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.02);
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 8px;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+@media print {
+    .btn, .card-header {
+        display: none !important;
+    }
+    
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+{% endblock %} 

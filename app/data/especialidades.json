@@ -1,0 +1,73 @@
+
+[
+  {
+    "id": 1,
+    "nome": "Enfermaria Cirúrgica",
+    "descricao": "Cuidados pós-operatórios e recuperação cirúrgica"
+  },
+  {
+    "id": 2,
+    "nome": "Ortopedia",
+    "descricao": "Cirurgia ortopédica e traumatologia"
+  },
+  {
+    "id": 3,
+    "nome": "Cirurgia Geral",
+    "descricao": "Procedimentos cirúrgicos gerais"
+  },
+  {
+    "id": 4,
+    "nome": "Ginecologia/Obstetrícia",
+    "descricao": "Saúde da mulher e obstetrícia"
+  },
+  {
+    "id": 5,
+    "nome": "Otorrinolaringologia",
+    "descricao": "Cirurgia de cabeça e pescoço"
+  },
+  {
+    "id": 6,
+    "nome": "Cirurgia Vascular",
+    "descricao": "Cirurgia vascular e endovascular"
+  },
+  {
+    "id": 7,
+    "nome": "Proctologia",
+    "descricao": "Cirurgia colorretal"
+  },
+  {
+    "id": 8,
+    "nome": "Urologia",
+    "descricao": "Cirurgia urológica"
+  },
+  {
+    "id": 9,
+    "nome": "Cirurgia Pediátrica",
+    "descricao": "Cirurgia em pacientes pediátricos"
+  },
+  {
+    "id": 10,
+    "nome": "Cabeça e Pescoço (Tireoide)",
+    "descricao": "Cirurgia de cabeça e pescoço"
+  },
+  {
+    "id": 11,
+    "nome": "Cirurgia Ambulatorial",
+    "descricao": "Procedimentos ambulatoriais"
+  },
+  {
+    "id": 12,
+    "nome": "Anestesiologia",
+    "descricao": "Anestesia e cuidados perioperatórios"
+  },
+  {
+    "id": 13,
+    "nome": "Oftalmologia",
+    "descricao": "Cirurgia oftalmológica"
+  },
+  {
+    "id": 14,
+    "nome": "Pneumologia",
+    "descricao": "Doenças respiratórias"
+  }
+]

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Especialidades</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Código</th>
+            <th>Capacidade Máxima</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for specialty in specialties %}
+        <tr>
+            <td>{{ specialty.nome }}</td>
+            <td>{{ specialty.codigo }}</td>
+            <td>{{ specialty.capacidade_maxima }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
