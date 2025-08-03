@@ -13,18 +13,16 @@ import openpyxl
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
 import io
+import os
 
-# Configurar root_path apenas se BASE_PATH estiver definido
-root_path = BASE_PATH if BASE_PATH else ""
-app = FastAPI(title="Internato Manager", version="2.0", root_path=root_path)
+# Configuração para subdiretório
+BASE_PATH = os.getenv("BASE_PATH", "")
+
+app = FastAPI(title="Internato Manager", version="2.0")
 
 # Configuração de templates e arquivos estáticos
 templates = Jinja2Templates(directory="app/templates")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
-# Configuração para subdiretório
-import os
-BASE_PATH = os.getenv("BASE_PATH", "")
 
 # Configuração para HTTPS
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
