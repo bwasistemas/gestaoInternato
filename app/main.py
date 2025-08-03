@@ -20,6 +20,31 @@ app = FastAPI(title="Internato Manager", version="2.0")
 templates = Jinja2Templates(directory="app/templates")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
+# Configuração para HTTPS
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+
+# Adicionar middleware para CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Middleware para detectar HTTPS
+@app.middleware("http")
+async def https_redirect(request: Request, call_next):
+    # Verificar se está usando HTTPS
+    forwarded_proto = request.headers.get("x-forwarded-proto")
+    if forwarded_proto == "https":
+        # Se estiver usando HTTPS, adicionar header para indicar
+        request.scope["scheme"] = "https"
+    
+    response = await call_next(request)
+    return response
+
 # Sessões (em produção, usar Redis ou similar)
 sessions = {}
 
@@ -41,9 +66,9 @@ async def read_root(request: Request):
     user = get_current_user(request)
     if user:
         if user.get("tipo") == "aluno":
-            return RedirectResponse(url="/aluno-dashboard")
+            return RedirectResponse(url="/aluno-dashboard", status_code=302)
         else:
-            return RedirectResponse(url="/dashboard")
+            return RedirectResponse(url="/dashboard", status_code=302)
     return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/login")
@@ -54,13 +79,13 @@ async def login(request: Request, email: str = Form(...), data_nascimento: str =
         session_id = secrets.token_urlsafe(32)
         sessions[session_id] = user
 
-        response = RedirectResponse(url="/dashboard", status_code=302)
+        # Usar URLs relativas para evitar problemas com HTTPS
         if user.get("tipo") == "aluno":
             response = RedirectResponse(url="/aluno-dashboard", status_code=302)
         else:
             response = RedirectResponse(url="/dashboard", status_code=302)
 
-        response.set_cookie(key="session_id", value=session_id, httponly=True)
+        response.set_cookie(key="session_id", value=session_id, httponly=True, secure=False, samesite="lax")
         return response
     else:
         return templates.TemplateResponse("login.html", {
@@ -71,14 +96,14 @@ async def login(request: Request, email: str = Form(...), data_nascimento: str =
 @app.get("/logout")
 async def logout():
     response = RedirectResponse(url="/", status_code=302)
-    response.delete_cookie(key="session_id")
+    response.delete_cookie(key="session_id", secure=False, samesite="lax")
     return response
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     user = require_auth(request)
     if user.get("tipo") == "aluno":
-        return RedirectResponse(url="/aluno-dashboard")
+        return RedirectResponse(url="/aluno-dashboard", status_code=302)
 
     dashboard_data = services.get_dashboard_data()
     return templates.TemplateResponse("dashboard.html", {
@@ -91,7 +116,7 @@ async def dashboard(request: Request):
 async def aluno_dashboard(request: Request):
     user = require_auth(request)
     if user.get("tipo") != "aluno":
-        return RedirectResponse(url="/dashboard")
+        return RedirectResponse(url="/dashboard", status_code=302)
 
     dashboard_data = services.get_aluno_dashboard_data(user["id"])
     if not dashboard_data:
@@ -512,4 +537,4 @@ async def exportar_agendas_todas_xls(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=3090)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
